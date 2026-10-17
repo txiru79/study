@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6fed">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Máel study</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f3f6ff;--card:#fff;--ink:#1d2433;--mut:#6b7386;--pri:#2f6fed;--prid:#2457c5;--ok:#2e9d5b;--okbg:#e3f6ea;--ko:#d94444;--kobg:#fde8e8}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;min-height:100vh}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 40px;padding-top:max(16px,env(safe-area-inset-top))}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 2px 10px rgba(30,50,120,.08);margin-bottom:14px}
+h1{margin:0 0 4px;font-size:30px}
+h3{margin:0 0 10px}
+.mut{color:var(--mut);margin:4px 0}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:16px;font-size:19px;font-weight:700;background:var(--pri);color:#fff;cursor:pointer;margin-top:12px;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:#e4ebff;color:var(--prid)}
+.btn.small{padding:10px;font-size:16px;margin-top:8px}
+.btn:disabled{opacity:.4}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.bar{flex:1;height:12px;background:#dfe6fb;border-radius:8px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--pri);width:0;transition:width .3s}
+.x{border:0;background:#e4ebff;border-radius:12px;width:40px;height:40px;font-size:18px;color:var(--prid);font-family:inherit}
+.cnt{font-weight:700;color:var(--prid);min-width:64px;text-align:right}
+.chip{display:inline-block;background:#e4ebff;color:var(--prid);border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;margin-bottom:10px}
+.q{font-size:19px;margin:0 0 8px;font-weight:600}
+.note{font-size:15px;color:var(--mut);margin:0 0 8px}
+.big{font-size:44px;font-weight:800;text-align:center;letter-spacing:2px;margin:6px 0 12px}
+.big.sm{font-size:25px;letter-spacing:0;line-height:1.3}
+.blank{display:inline-block;min-width:44px;border:3px dashed #b8c6f0;border-radius:10px;color:#9aaad8}
+.opts{display:grid;gap:10px}
+.opt{border:2px solid #d5def5;background:#fff;border-radius:14px;padding:14px;font-size:19px;font-weight:700;font-family:inherit;color:var(--ink)}
+.opt:active{background:#eef2ff}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.ko{background:var(--kobg);border-color:var(--ko)}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0;font-size:19px}
+.row.inline{justify-content:center}
+input.num{width:116px;font-size:22px;font-weight:700;text-align:center;padding:10px;border:2px solid #c9d4f2;border-radius:12px;font-family:inherit;color:var(--ink)}
+input.num.sm{width:86px;font-size:20px;padding:10px 4px}
+input.num:focus{outline:none;border-color:var(--pri)}
+input.num.ok{border-color:var(--ok);background:var(--okbg)}
+input.num.ko{border-color:var(--ko);background:var(--kobg)}
+.fx{min-width:64px;text-align:center;background:#eef2ff;border-radius:12px;padding:10px 8px;font-weight:800;font-size:20px}
+.sep{font-weight:800;color:var(--mut)}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600;font-size:17px}
+.fb.ok{background:var(--okbg);color:#176b3a}
+.fb.ko{background:var(--kobg);color:#8f2121}
+.fb small{display:block;margin-top:6px;font-weight:500;font-size:15px}
+.lbl{font-size:14px;color:var(--mut);font-weight:700;margin:8px 0 4px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:56px;padding:6px;border-radius:14px}
+.tiles.slots{background:#eef2ff}
+.tile{border:2px solid #c9d4f2;background:#fff;border-radius:14px;padding:12px 16px;font-size:22px;font-weight:800;font-family:inherit;color:var(--ink)}
+.tile.ok{background:var(--okbg);border-color:var(--ok)}
+.tile.ko{background:var(--kobg);border-color:var(--ko)}
+.tokrow{margin:8px 0 12px}
+.tok{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#ffd66b;border:2px solid #d9a400;font-weight:800;font-size:14px;margin:3px}
+.tok.plate{border-radius:8px;width:52px;background:#c9d8ff;border-color:#6d8cdf}
+.fam{margin-bottom:14px}
+.grp{display:inline-block;margin:4px 10px 4px 0}
+.tk{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;margin:2px}
+.fx2{text-align:center;background:#eef2ff;border-radius:12px;padding:8px 12px;font-weight:700;font-size:17px;line-height:1.35}
+.lenrow{display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:700;color:var(--prid)}
+.lenb{border:2px solid #c9d4f2;background:#fff;border-radius:12px;padding:8px 16px;font-size:17px;font-weight:800;font-family:inherit;color:var(--prid)}
+.lenb.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.tk.t1000{background:#d9a400}.tk.t100{background:#2e9d5b}.tk.t10{background:#d94444}.tk.t1{background:#2aa6c4}
+.famhead{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+.stars{font-size:46px;text-align:center;margin:6px 0}
+.score{font-size:40px;font-weight:800;text-align:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>Aplikazio honek JavaScript behar du.</noscript>
+<script>
+// ==GEN-START==
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+// Zenbakiak letraz (euskaraz)
+const UNI=['','bat','bi','hiru','lau','bost','sei','zazpi','zortzi','bederatzi','hamar','hamaika','hamabi','hamahiru','hamalau','hamabost','hamasei','hamazazpi','hamazortzi','hemeretzi'];
+const HOGEI=['hogei','berrogei','hirurogei','laurogei'];
+const EHUN=['','ehun','berrehun','hirurehun','laurehun','bostehun','seiehun','zazpiehun','zortziehun','bederatziehun'];
+function below100(n){
+  if(n<20) return UNI[n];
+  const t=Math.floor(n/20), r=n%20, base=HOGEI[t-1];
+  return r===0 ? base : base+'ta '+UNI[r];
+}
+function words(n){
+  const parts=[];
+  const th=Math.floor(n/1000), h=Math.floor(n%1000/100), r=n%100;
+  if(th) parts.push(th===1?'mila':UNI[th]+' mila');
+  if(h) parts.push(EHUN[h]);
+  if(r) parts.push(below100(r));
+  if(parts.length>1){ const last=parts.pop(); return parts.join(' ')+' eta '+last; }
+  return parts[0];
+}
+
+const POS=['milakoen','ehunekoen','hamarrekoen','batekoen'];
+const VAL=[1000,100,10,1];
+
+function distinctDigits(){
+  let d;
+  do{ d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,4); }while(d[0]===0);
+  return d;
+}
+function similar(n,count){
+  const set=new Set([n]);
+  const s=String(n).split('');
+  let tries=0;
+  while(set.size<count+1 && tries<300){
+    tries++;
+    const a=s.slice();
+    const i=rnd(0,s.length-1), j=rnd(0,s.length-1);
+    if(Math.random()<.5){ [a[i],a[j]]=[a[j],a[i]]; } else { a[i]=String(rnd(0,9)); }
+    if(a[0]==='0') continue;
+    set.add(+a.join(''));
+  }
+  return [...set].slice(1);
+}
+function permSet(n,count){
+  const s=String(n).split('');
+  const set=new Set();
+  for(let t=0;t<300&&set.size<count;t++){
+    const a=shuffle(s);
+    if(a[0]==='0') continue;
+    const v=+a.join('');
+    if(v!==n) set.add(v);
+  }
+  return set.size>=count?[...set]:similar(n,count);
+}
+function rndNum(){ return Math.random()<.3?rnd(100,999):rnd(1000,9999); }
+function mkChoice(correct,wrongs){
+  const opts=shuffle([correct,...wrongs]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+function genPosizioa(){
+  const d=distinctDigits(), p=rnd(0,3), n=+d.join('');
+  return {kind:'choice',big:String(n),q:`${d[p]} zifra zein posizioan dago?`,options:POS.slice(),answer:p,cols:2,
+    explain:`${d[p]} zifra ${POS[p]} posizioan dago.`};
+}
+function genBalioa(){
+  const d=distinctDigits(), n=+d.join('');
+  const p=pick([0,1,2,3].filter(i=>d[i]!==0));
+  const v=d[p]*VAL[p];
+  return {kind:'inputs',big:String(n),q:'Idatzi zifraren balioa.',
+    fields:[{pre:`${d[p]} zifrak`,answer:v,post:'adierazten du.'}]};
+}
+function genDeskonposatu(){
+  let d;
+  do{ d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)]; }while(d.filter(x=>x).length<2);
+  const n=+d.join('');
+  const parts=d.map((x,i)=>x*VAL[i]).filter(x=>x);
+  return {kind:'inputs',layout:'inline',sep:'+',big:`${n} =`,
+    q:'Deskonposatu zenbakia milako, ehuneko, hamarreko eta batekoetan.',
+    note:'Adibidea: 4325 = 4000 + 300 + 20 + 5',
+    fields:parts.map(p=>({answer:p}))};
+}
+function genSegida(){
+  const step=pick([1,10,100,1000,25,50,500,200]);
+  const dir=Math.random()<.4?-1:1;
+  for(let t=0;t<2000;t++){
+    let start;
+    if(step===1) start=rnd(0,9995);
+    else if(step===10||step===100||step===1000) start=rnd(0,Math.floor(10000/step))*step+rnd(0,step-1);
+    else start=rnd(0,Math.floor(10000/step))*step;
+    const terms=[0,1,2,3,4,5].map(i=>start+dir*step*i);
+    if(!terms.every(x=>x>=0&&x<=10000)) continue;
+    const hid=shuffle([0,1,2,3,4,5]).slice(0,rnd(2,3));
+    let adj=false;
+    for(let i=0;i<5;i++) if(!hid.includes(i)&&!hid.includes(i+1)) adj=true;
+    if(!adj) continue;
+    return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida hau:',
+      fields:terms.map((x,i)=>hid.includes(i)?{answer:x}:{fixed:String(x)})};
+  }
+  return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida hau:',
+    fields:[1000,2000,3000,4000,5000,6000].map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+}
+function genSaltoka(){
+  const step=pick([5,6,7,8,9,25]);
+  const down=Math.random()<.35;
+  const s0=down?step*rnd(9,14):step*rnd(1,4);
+  const terms=[0,1,2,3,4,5].map(i=>down?s0-step*i:s0+step*i);
+  return {kind:'inputs',layout:'inline',sep:'→',q:down?`Zenbatu ${step}naka atzerantz:`:`Zenbatu ${step}naka:`,
+    fields:terms.map((x,i)=>i<2?{fixed:String(x)}:{answer:x})};
+}
+function genAurrera(){
+  const fwd=Math.random()<.5;
+  const unit=pick([1000,100]);
+  const b=unit===1000?rnd(2,9)*1000:rnd(10,99)*100;
+  const terms=fwd?[b-3,b-2,b-1,b,b+1,b+2]:[b+3,b+2,b+1,b,b-1,b-2];
+  return {kind:'inputs',layout:'inline',sep:',',
+    q:fwd?'Zenbatu aurrerantz (batekoak):':'Zenbatu atzerantz (batekoak):',
+    fields:terms.map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+}
+function genEhunekoak(){
+  const tok=(c,k)=>Array.from({length:k},()=>`<span class="tok ${c}">${c==='coin'?25:100}</span>`).join('');
+  let html,total;
+  if(Math.random()<.5){
+    const k=rnd(3,10);
+    html=`<div class="tokrow"><b>25eko poltsatxoak:</b><br>${tok('coin',k)}</div>`;
+    total=25*k;
+  }else{
+    const m=rnd(1,4), k=rnd(1,5);
+    html=`<div class="tokrow"><b>100eko plakak eta 25eko poltsatxoak:</b><br>${tok('plate',m)}${tok('coin',k)}</div>`;
+    total=100*m+25*k;
+  }
+  return {kind:'inputs',q:'Zenbatu taldeak eta idatzi guztira zenbat diren.',html,
+    fields:[{pre:'Guztira =',answer:total}]};
+}
+function genFalta(){
+  const d=pick([1,10,100,1000,100,10]);
+  const x=rnd(1100,8800);
+  const t=rnd(1,6);
+  let f;
+  if(t===1) f={pre:`${x+d} zenbakia`,answer:d,post:`gehiago da ${x} baino.`};
+  else if(t===2) f={pre:`${x} zenbakia`,answer:d,post:`gutxiago da ${x+d} baino.`};
+  else if(t===3) f={pre:`${x} zenbakia ${d} gehiago da`,answer:x-d,post:'baino.'};
+  else if(t===4) f={pre:`${x} zenbakia ${d} gutxiago da`,answer:x+d,post:'baino.'};
+  else if(t===5) f={pre:'',answer:x+d,post:`zenbakia ${d} gehiago da ${x} baino.`};
+  else f={pre:'',answer:x-d,post:`zenbakia ${d} gutxiago da ${x} baino.`};
+  return {kind:'inputs',q:'Argitu zer zenbaki falta den.',fields:[f]};
+}
+function genTaula(){
+  let n=rnd(1000,8999);
+  if(Math.random()<.4) n=pick([n-n%10+9,n-n%100+99,n-n%100,n-n%10]);
+  const ops=shuffle([1,10,100,1000,-1,-10,-100,-1000]).filter(o=>n+o>=0&&n+o<=9999).slice(0,3);
+  return {kind:'inputs',big:`Zenbakia: ${n}`,q:'Osatu taula:',
+    fields:ops.map(o=>({pre:`${Math.abs(o)} ${o>0?'gehiago':'gutxiago'}:`,answer:n+o}))};
+}
+function genLetraz(){
+  const n=rnd(1000,9999);
+  const c=mkChoice(cap(words(n)),similar(n,3).map(x=>cap(words(x))));
+  const eur=Math.random()<.4;
+  return {kind:'choice',big:eur?`${n} €`:String(n),
+    q:eur?'Zein da diru-kopuru hau letraz idatzita?':'Zein da zenbaki hau letraz idatzita?',
+    options:c.options,answer:c.answer,cols:1,
+    explain:`${n} = ${cap(words(n))}`};
+}
+function genZenbakira(){
+  const n=rnd(1000,9999);
+  const c=mkChoice(String(n),similar(n,3).map(String));
+  return {kind:'choice',big:cap(words(n)),bigSmall:true,q:'Zein zenbaki da?',options:c.options,answer:c.answer,cols:2,
+    explain:`${cap(words(n))} = ${n}`};
+}
+function genAlderatu(){
+  const a=rndNum();
+  const b=Math.random()<.15?a:(similar(a,1)[0]||a+1);
+  const ans=a<b?0:(a===b?1:2);
+  const sym=['<','=','>'][ans];
+  return {kind:'choice',q:'Alderatu zenbakiak. Zein ikur dago hutsunean?',
+    big:`${a} <span class="blank">?</span> ${b}`,bigHtml:true,
+    options:['<','=','>'],answer:ans,cols:3,explain:`${a} ${sym} ${b}`};
+}
+function genHandiena(){
+  const a=rndNum();
+  const nums=[a,...(Math.random()<.5?permSet(a,3):similar(a,3))];
+  const mode=pick(['handiena','txikiena']);
+  const best=mode==='handiena'?Math.max(...nums):Math.min(...nums);
+  const opts=shuffle(nums.map(String));
+  return {kind:'choice',q:`Aukeratu zenbaki ${mode}.`,options:opts,answer:opts.indexOf(String(best)),cols:2,
+    explain:`${best} da ${mode}.`};
+}
+function genOrdenatu(){
+  const a=rndNum();
+  const cnt=pick([3,4,4]);
+  const nums=shuffle([a,...(Math.random()<.5?permSet(a,cnt-1):similar(a,cnt-1))]);
+  const asc=Math.random()<.5;
+  const sorted=nums.slice().sort((x,y)=>asc?x-y:y-x).map(String);
+  return {kind:'order',q:asc?'Ordenatu zenbakiak txikienetik handienera:':'Ordenatu zenbakiak handienetik txikienera:',
+    items:nums.map(String),answer:sorted,explain:sorted.join(' , ')};
+}
+
+function gcd(a,b){return b?gcd(b,a%b):a;}
+function genOsatu(){
+  const d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)];
+  if(Math.random()<.5) d[rnd(1,3)]=0;
+  const n=+d.join('');
+  return {kind:'inputs',big:`${n} =`,q:'Osatu hutsuneak.',
+    fields:[{answer:d[0],post:'milako +'},{answer:d[1],post:'ehuneko +'},{answer:d[2],post:'hamarreko +'},{answer:d[3],post:'bateko'}]};
+}
+function genZifra(){
+  const d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)];
+  const n=+d.join(''), p=rnd(0,3);
+  return {kind:'inputs',big:String(n),q:`Zer zifra dago ${POS[p]} posizioan?`,fields:[{answer:d[p]}]};
+}
+function genFitxak(){
+  const d=[rnd(1,6),rnd(0,5),rnd(0,5),rnd(0,5)];
+  if(Math.random()<.6) d[rnd(1,3)]=0;
+  const n=+d.join('');
+  const cls=['t1000','t100','t10','t1'];
+  const html=`<div class="tokrow">`+d.map((c,i)=>c?`<span class="grp">`+
+    Array.from({length:c},()=>`<span class="tk ${cls[i]}">${VAL[i]}</span>`).join('')+`</span>`:'').join('')+`</div>`;
+  return {kind:'inputs',q:'Zer zenbaki adierazten dute fitxek? Zenbatu eta idatzi.',html,
+    fields:[{pre:'Zenbakia =',answer:n}]};
+}
+function genEraiki(){
+  const d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,4);
+  const big=Math.random()<.5;
+  const s=d.slice().sort((a,b)=>a-b);
+  const answer=big?+s.slice().reverse().join(''):+(s[0]===0?[s[1],s[0],s[2],s[3]]:s).join('');
+  const html=`<div class="row inline">`+d.map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'inputs',q:`Osatu ahal den 4 zifrako zenbaki ${big?'handiena':'txikiena'}, emandako lau zifrekin.`,html,
+    fields:[{pre:'Zenbakia =',answer}]};
+}
+function genHandiagoa(){
+  const a=rnd(1000,9999);
+  const b=similar(a,1)[0]||a+1;
+  const hi=Math.max(a,b), lo=Math.min(a,b);
+  const mode=pick(['handiagoa','txikiagoa']);
+  const html=`<div class="row inline">`+shuffle([hi,lo]).map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'inputs',layout:'sentence',q:'Alderatu zenbakiak eta bete hutsuneak.',html,
+    meta:{hi,lo,mode},
+    fields:[{answer:mode==='handiagoa'?hi:lo,post:`${mode} da`},{answer:mode==='handiagoa'?lo:hi,post:'baino.'}]};
+}
+function genProblema(){
+  const base=rnd(11,89)*100+rnd(0,99);
+  const d=pick([10,100,1000]);
+  const more=Math.random()<.5;
+  return {kind:'inputs',
+    q:`A ikastetxean ${base} ikasle daude. B ikastetxean ${d} ikasle ${more?'gehiago':'gutxiago'} daude A ikastetxean baino. Zenbat ikasle daude B ikastetxean?`,
+    fields:[{pre:'Erantzuna:',answer:more?base+d:base-d,post:'ikasle'}]};
+}
+function genBietan(){
+  const pairs=[[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[7,8],[7,9],[8,9]];
+  const [a,b]=shuffle(pick(pairs));
+  const l=a*b/gcd(a,b);
+  const seq=k=>[1,2,3,4].map(i=>k*i).join(', ')+'...';
+  return {kind:'inputs',meta:{a,b,l},
+    q:'Zein da bi segidetan ageri den lehenengo zenbakia?',
+    note:`${a}naka: ${seq(a)}   ${b}naka: ${seq(b)}`,
+    fields:[{pre:'Zenbakia =',answer:l}]};
+}
+
+function tokHtml(d){
+  const cls=['t1000','t100','t10','t1'];
+  return `<div class="tokrow">`+d.map((c,i)=>c?`<span class="grp">`+
+    Array.from({length:c},()=>`<span class="tk ${cls[i]}">${VAL[i]}</span>`).join('')+`</span>`:'').join('')+`</div>`;
+}
+function genFitxakLetraz(){
+  const d=[rnd(1,6),rnd(0,5),rnd(0,5),rnd(0,5)];
+  if(Math.random()<.6) d[rnd(1,3)]=0;
+  const n=+d.join('');
+  const c=mkChoice(cap(words(n)),similar(n,3).map(x=>cap(words(x))));
+  return {kind:'choice',q:'Zenbatu fitxak. Zein da zenbaki hori letraz idatzita?',html:tokHtml(d),
+    options:c.options,answer:c.answer,cols:1,meta:{n},explain:`${n} = ${cap(words(n))}`};
+}
+function genMilakoak(){
+  const k=rnd(2,10);
+  const html=`<div class="tokrow">`+Array.from({length:k},()=>`<span class="tk t1000">1000</span>`).join('')+`</div>`;
+  return {kind:'inputs',q:'Zenbatu milakoak eta idatzi zenbakia.',html,meta:{k},
+    fields:[{pre:'Zenbakia =',answer:k*1000}]};
+}
+function trapNum(){
+  let n=rnd(1000,8999);
+  if(Math.random()<.6) n=pick([n-n%10+9,n-n%100+99,n-n%1000+999,n-n%100,n-n%1000,n-n%10]);
+  return Math.min(Math.max(n,1000),8999);
+}
+function genBaino(){
+  const fields=[];
+  shuffle([1,10,100,1000]).slice(0,2).forEach(d=>{
+    const n=trapNum(), more=Math.random()<.5;
+    fields.push({pre:`${n} baino ${d} ${more?'gehiago':'gutxiago'}:`,answer:more?n+d:n-d});
+  });
+  return {kind:'inputs',q:'Kalkulatu gogoz eta osatu erantzunak.',fields};
+}
+function genArauSegida(){
+  const step=pick([10,100,1000,10,100]);
+  const dir=Math.random()<.5?1:-1;
+  for(let t=0;t<2000;t++){
+    const start=rnd(0,Math.floor(10000/step))*step+rnd(0,step-1);
+    const terms=[0,1,2,3,4,5].map(i=>start+dir*step*i);
+    if(!terms.every(x=>x>=0&&x<=10000)) continue;
+    return {kind:'inputs',layout:'inline',sep:',',meta:{step,dir},
+      q:`Osatu zenbaki-segida hau arauari jarraituz: (${dir>0?'+':'-'}${step})`,
+      fields:terms.map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+  }
+  return {kind:'inputs',layout:'inline',sep:',',meta:{step:100,dir:1},
+    q:'Osatu zenbaki-segida hau arauari jarraituz: (+100)',
+    fields:[3450,3550,3650,3750,3850,3950].map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+}
+function genMultiploa(){
+  const step=pick([5,6,7,8,9]);
+  const neg=Math.random()<.35;
+  const mult=k=>step*k;
+  let correct,wrongs,q;
+  if(!neg){
+    correct=mult(rnd(2,12));
+    const w=new Set();
+    while(w.size<3){ const c=correct+pick([-4,-3,-2,-1,1,2,3,4]); if(c>0&&c%step!==0) w.add(c); }
+    wrongs=[...w];
+    q=`Zein zenbaki ageri da ${step}naka zenbatzean?`;
+  }else{
+    for(;;){ const c=mult(rnd(2,12))+rnd(1,step-1); if(c%step!==0){ correct=c; break; } }
+    const w=new Set();
+    while(w.size<3) w.add(mult(rnd(2,12)));
+    wrongs=[...w];
+    q=`Zein zenbaki EZ da ageri ${step}naka zenbatzean?`;
+  }
+  const c=mkChoice(String(correct),wrongs.map(String));
+  return {kind:'choice',q,options:c.options,answer:c.answer,cols:2,meta:{step,neg},
+    explain:`${step}naka: ${[1,2,3,4,5,6].map(i=>step*i).join(', ')}...`};
+}
+function genZuzena(){
+  const u=pick([10,25,50,100,500,1000]);
+  const start=rnd(0,Math.floor(10000/u)-10)*u;
+  const m=pick([1,2,3,4,6,7,8,9]);
+  const target=start+m*u;
+  const x0=20, dx=30, y=62;
+  let s=`<svg viewBox="0 0 340 100" style="width:100%;max-width:420px;display:block;margin:6px auto" role="img" aria-label="Zenbaki zuzena">`;
+  s+=`<line x1="${x0}" y1="${y}" x2="${x0+10*dx}" y2="${y}" stroke="#1d2433" stroke-width="3" stroke-linecap="round"/>`;
+  for(let i=0;i<=10;i++){
+    const x=x0+i*dx, big=(i===0||i===5||i===10);
+    s+=`<line x1="${x}" y1="${y-(big?12:8)}" x2="${x}" y2="${y+(big?12:8)}" stroke="#1d2433" stroke-width="${big?3:2}"/>`;
+    if(big) s+=`<text x="${x}" y="${y+32}" text-anchor="middle" font-size="12" font-weight="700" fill="#1d2433">${start+i*u}</text>`;
+  }
+  const ax=x0+m*dx;
+  s+=`<polygon points="${ax-9},${y-34} ${ax+9},${y-34} ${ax},${y-18}" fill="#d94444"/><text x="${ax}" y="${y-40}" text-anchor="middle" font-size="16" font-weight="800" fill="#d94444">?</text></svg>`;
+  const cands=shuffle([target-u,target+u,target-2*u,target+2*u,target-3*u,target+3*u]).filter(x=>x>=0&&x<=10000);
+  const c=mkChoice(String(target),cands.slice(0,3).map(String));
+  return {kind:'choice',q:'Zer zenbaki adierazten du geziak?',html:s,options:c.options,answer:c.answer,cols:2,
+    meta:{start,u,m,target},explain:`Marra batetik bestera ${u} doa. Erantzuna: ${target}.`};
+}
+function genAuHur(){
+  let n=rnd(1001,8998);
+  if(Math.random()<.7) n=pick([n-n%10,n-n%10+9,n-n%100,n-n%100+99,n-n%1000,n-n%1000+999]);
+  n=Math.min(Math.max(n,1000),9998);
+  return {kind:'inputs',big:String(n),q:'Idatzi zenbakiaren aurrekoa eta hurrengoa.',
+    fields:[{pre:'Aurrekoa:',answer:n-1},{pre:'Hurrengoa:',answer:n+1}]};
+}
+function genBaliokidea(){
+  const U=['bateko','hamarreko','ehuneko','milako'];
+  let i,j;
+  do{ i=rnd(0,3); j=rnd(0,3); }while(i===j);
+  const f=Math.pow(10,Math.abs(i-j));
+  const k=rnd(1,9);
+  let pre,ans;
+  if(i>j){ pre=`${k} ${U[i]} =`; ans=k*f; } else { pre=`${k*f} ${U[i]} =`; ans=k; }
+  return {kind:'inputs',q:'Osatu baliokidetasuna.',note:'10 bateko = hamarreko 1. 10 hamarreko = ehuneko 1. 10 ehuneko = milako 1.',
+    fields:[{pre,answer:ans,post:U[j]}],meta:{i,j}};
+}
+function genZenbatKop(){
+  const U=['bateko','hamarreko','ehuneko','milako'];
+  const idx=pick([1,2,3]);
+  const u=Math.pow(10,idx);
+  const k=idx===3?rnd(2,9):rnd(Math.ceil(1000/u),Math.floor(9999/u));
+  return {kind:'inputs',big:String(k*u),q:`Zenbat ${U[idx]} daude zenbaki honetan?`,
+    fields:[{pre:'Erantzuna:',answer:k,post:U[idx]}],meta:{idx}};
+}
+function genTestuingurua(){
+  const kind=pick(['animaliak','mendiak','ikastetxeak','liburutegiak']);
+  let items,qMax,qMin;
+  if(kind==='animaliak'){
+    items=[['hipopotamoa',2500,' kg'],['elefantea',5800,' kg'],['errinozeroa',2350,' kg']];
+    qMax='Zein da animalia astunena?'; qMin='Zein da animalia arinena?';
+  }else if(kind==='mendiak'){
+    const all=[['Everest',8848],['K2',8611],['Kilimanjaro',5895],['Mont Blanc',4806],['Teide',3715],['Mulhacén',3479],['Aneto',3404]];
+    items=shuffle(all).slice(0,rnd(3,4)).map(x=>[x[0],x[1],' m']);
+    qMax='Zein da mendirik altuena?'; qMin='Zein da mendirik baxuena?';
+  }else{
+    const a=rnd(1000,9999);
+    const nums=shuffle([a,...similar(a,2)]);
+    if(kind==='ikastetxeak'){
+      items=['A','B','C'].map((l,i)=>[l+' ikastetxea',nums[i],' ikasle']);
+      qMax='Zein da ikasle gehien dituen ikastetxea?'; qMin='Zein da ikasle gutxien dituen ikastetxea?';
+    }else{
+      items=['A','B','C'].map((l,i)=>[l+' liburutegia',nums[i],' liburu']);
+      qMax='Zein da liburu gehien dituen liburutegia?'; qMin='Zein da liburu gutxien dituen liburutegia?';
+    }
+  }
+  const max=Math.random()<.5;
+  const best=items.reduce((b,x)=>(max?x[1]>b[1]:x[1]<b[1])?x:b,items[0]);
+  const html=`<div class="row inline">`+shuffle(items).map(([n,v,u])=>`<span class="fx2">${n}<br>${v}${u}</span>`).join('')+`</div>`;
+  const c=mkChoice(best[0],items.filter(x=>x!==best).map(x=>x[0]));
+  return {kind:'choice',q:max?qMax:qMin,html,options:c.options,answer:c.answer,cols:1,
+    meta:{items:items.map(x=>[x[0],x[1]]),max,best:best[0]},explain:`${best[0]}: ${best[1]}${best[2]}.`};
+}
+function genDorreak(){
+  const note='Kaxa bakoitzean 100 sagar daude. Dorre bakoitzean 10 kaxa daude (1000 sagar).';
+  const t=rnd(1,5);
+  if(t===1){ const n=rnd(2,9); return {kind:'inputs',note,q:`Zenbat sagar daude ${n} kaxatan?`,fields:[{pre:'Sagarrak:',answer:100*n}]}; }
+  if(t===2){ const n=rnd(2,9); return {kind:'inputs',note,q:`Zenbat sagar daude ${n} dorretan?`,fields:[{pre:'Sagarrak:',answer:1000*n}]}; }
+  if(t===3){ const a=rnd(1,8), b=rnd(1,9); return {kind:'inputs',note,q:`Zenbat sagar daude ${a} dorre eta ${b} kaxatan?`,fields:[{pre:'Sagarrak:',answer:1000*a+100*b}]}; }
+  if(t===4){ const X=rnd(11,99)*100; return {kind:'inputs',note,q:`${X} sagar daude. Zenbat kaxa behar dira sagar horiek gordetzeko?`,fields:[{pre:'Kaxak:',answer:X/100}]}; }
+  const a=rnd(1,8), b=rnd(1,9);
+  return {kind:'inputs',note,q:`${1000*a+100*b} sagar daude. Zenbat dorre eta zenbat kaxa osatzen dira?`,
+    fields:[{pre:'Dorreak:',answer:a},{pre:'Kaxak:',answer:b}]};
+}
+
+const FAMS={
+  pos:{name:'Posizio-balioa',icon:'🔢'},
+  zen:{name:'Zenbatzea eta segidak',icon:'➕'},
+  ald:{name:'Gehiago eta gutxiago',icon:'⬆️'},
+  ide:{name:'Letraz eta zenbakiz',icon:'✏️'},
+  com:{name:'Alderatzea eta ordenatzea',icon:'⚖️'},
+  pro:{name:'Problemak',icon:'🧩'}
+};
+const TYPES=[
+  {id:'posizioa',fam:'pos',gen:genPosizioa,hint:'Eskuinetik ezkerrera: batekoak, hamarrekoak, ehunekoak, milakoak.'},
+  {id:'balioa',fam:'pos',gen:genBalioa,hint:'Zifra baten balioa bere posizioaren araberakoa da: milakoak 1000, ehunekoak 100, hamarrekoak 10.'},
+  {id:'deskonposatu',fam:'pos',gen:genDeskonposatu,hint:'Idatzi zifra bakoitza bere balioarekin: milakoak, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'segida',fam:'zen',gen:genSegida,hint:'Begiratu zenbat gehitzen edo kentzen den zenbaki batetik bestera.'},
+  {id:'saltoka',fam:'zen',gen:genSaltoka,hint:'Gehitu beti zenbaki bera aurreko zenbakiari.'},
+  {id:'aurrera',fam:'zen',gen:genAurrera,hint:'Kontuz zenbaki borobilarekin: 3999 + 1 = 4000.'},
+  {id:'ehunekoak',fam:'zen',gen:genEhunekoak,hint:'Zenbatu taldeak: 25, 50, 75, 100...'},
+  {id:'falta',fam:'ald',gen:genFalta,hint:'Zenbat doa batetik bestera? 1, 10, 100 edo 1000?'},
+  {id:'taula',fam:'ald',gen:genTaula,hint:'10 gehiago: hamarrekoen zifra bat gehiago. 100 gehiago: ehunekoena. 1000 gehiago: milakoena.'},
+  {id:'letraz',fam:'ide',gen:genLetraz,hint:'Irakurri zatika: mila, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'zenbakira',fam:'ide',gen:genZenbakira,hint:'Irakurri zatika: mila, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'alderatu',fam:'com',gen:genAlderatu,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'handiena',fam:'com',gen:genHandiena,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'ordenatu',fam:'com',gen:genOrdenatu,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'osatu',fam:'pos',gen:genOsatu,hint:'Zifra bakoitza bere postuan dago: milakoak, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'zifra',fam:'pos',gen:genZifra,hint:'Eskuinetik ezkerrera: batekoak, hamarrekoak, ehunekoak, milakoak.'},
+  {id:'fitxak',fam:'pos',gen:genFitxak,hint:'Hori = 1000, berdea = 100, gorria = 10, urdina = 1. Fitxarik ez badago, zifra 0 da.'},
+  {id:'eraiki',fam:'pos',gen:genEraiki,hint:'Handiena: zifra handienak ezkerrean. Txikiena: zifra txikienak ezkerrean, baina 0 ez da lehena izan.'},
+  {id:'bietan',fam:'zen',gen:genBietan,hint:'Idatzi bi segidak eta bilatu zein den lehen zenbaki berdina.'},
+  {id:'problema',fam:'pro',gen:genProblema,hint:'Gehiago: gehitu. Gutxiago: kendu.'},
+  {id:'handiagoa',fam:'com',gen:genHandiagoa,hint:'Alderatu zifrak ezkerretik: milakoak, gero ehunekoak...'},
+  {id:'baino',fam:'ald',gen:genBaino,hint:'Gehiago: gehitu. Gutxiago: kendu. Kontuz 9 eta 0 zifrekin: 3999 + 1 = 4000.'},
+  {id:'arauSegida',fam:'zen',gen:genArauSegida,hint:'Aplikatu araua zenbaki bakoitzari: + gehitu, - kendu.'},
+  {id:'multiploa',fam:'zen',gen:genMultiploa,hint:'Zenbatu zenbaki bera gehituz eta begiratu zein ageri den.'},
+  {id:'zuzena',fam:'zen',gen:genZuzena,hint:'Marra batetik bestera zenbat doan kalkulatu: ezkerreko eta erdiko zenbakien arteko aldea, 5 marratan banatuta.'},
+  {id:'auHur',fam:'zen',gen:genAuHur,hint:'Aurrekoa: 1 gutxiago. Hurrengoa: 1 gehiago. Kontuz: 5999 + 1 = 6000.'},
+  {id:'baliokidea',fam:'pos',gen:genBaliokidea,hint:'10 bateko = hamarreko 1. 10 hamarreko = ehuneko 1. 10 ehuneko = milako 1.'},
+  {id:'zenbatKop',fam:'pos',gen:genZenbatKop,hint:'Hamarrekoak: kendu azken zero bat. Ehunekoak: bi zero. Milakoak: hiru zero.'},
+  {id:'milakoak',fam:'pos',gen:genMilakoak,hint:'Fitxa bakoitza 1000 da: 1000, 2000, 3000...'},
+  {id:'fitxakLetraz',fam:'ide',gen:genFitxakLetraz,hint:'Lehenik zenbatu fitxak eta idatzi zenbakia. Gero irakurri zatika.'},
+  {id:'testuingurua',fam:'com',gen:genTestuingurua,hint:'Alderatu zifrak ezkerretik: milakoak, gero ehunekoak...'},
+  {id:'dorreak',fam:'pro',gen:genDorreak,hint:'Dorre 1 = 1000 sagar. Kaxa 1 = 100 sagar.'}
+];
+// ==GEN-END==
+
+// ---------- Datuak ----------
+const KEY='maelStudy.v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};}}
+const DB=Object.assign({stats:{},sessions:0,stars:0,days:{},len:10},load());
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const PRAISE=['Zuzen!','Bikain!','Oso ondo!','Primeran!','Ederki!','Bejondeizula!'];
+
+const app=document.getElementById('app');
+const S={sess:null};
+
+// ---------- Ariketa aukeraketa (nahastuta eta pisuekin) ----------
+function nextType(filter,last,recent){
+  recent=recent||[];
+  const pool=TYPES.filter(t=>!filter||t.fam===filter);
+  let cand=filter?pool.filter(t=>!last||t.id!==last.id):pool.filter(t=>!last||t.fam!==last.fam);
+  const fresh=cand.filter(t=>!recent.includes(t.id));
+  if(fresh.length) cand=fresh;
+  if(!cand.length) cand=pool;
+  const w=cand.map(t=>{const s=DB.stats[t.id]||{ok:0,ko:0};return 1+3*(s.ko/(s.ok+s.ko+1));});
+  let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<cand.length;i++){r-=w[i];if(r<=0)return cand[i];}
+  return cand[cand.length-1];
+}
+
+// ---------- Hasiera ----------
+function home(){
+  const td=DB.days[todayKey()]||0;
+  const famHtml=Object.entries(FAMS).map(([k,f])=>{
+    let ok=0,ko=0;
+    TYPES.filter(t=>t.fam===k).forEach(t=>{const s=DB.stats[t.id];if(s){ok+=s.ok;ko+=s.ko;}});
+    const tot=ok+ko, pct=tot?Math.round(100*ok/tot):0;
+    return `<div class="fam"><div class="famhead"><span>${f.icon} ${f.name}</span><span>${tot?pct+'%':'-'}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <button class="btn sec small" data-fam="${k}">Praktikatu</button></div>`;
+  }).join('');
+  app.innerHTML=`
+    <div class="card"><h1>Máel study</h1>
+      <p class="mut">Matematika berrikuspena. 1. unitatea: 10 000ra arteko zenbakiak.</p>
+      <button class="btn" id="go">🚀 Hasi berrikuspena</button>
+      <p class="mut">${DB.len||10} ariketa, gai guztiak nahastuta.</p>
+      <div class="lenrow">Ariketak: ${[10,15,20].map(n=>`<button class="lenb${(DB.len||10)===n?' on':''}" data-len="${n}">${n}</button>`).join('')}</div></div>
+    <div class="card"><b>⭐ ${DB.stars}</b> izar &nbsp;·&nbsp; <b>🎯 ${DB.sessions}</b> saio &nbsp;·&nbsp; Gaur: <b>${td}</b></div>
+    <div class="card"><h3>Gaika praktikatu</h3>${famHtml}</div>`;
+  document.getElementById('go').onclick=()=>start(null);
+  app.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{DB.len=+b.dataset.len;save();home();});
+  app.querySelectorAll('[data-fam]').forEach(b=>b.onclick=()=>start(b.dataset.fam));
+}
+
+// ---------- Saioa ----------
+function start(filter){
+  S.sess={filter,n:0,total:DB.len||10,score:0,last:null,done:false,recent:[]};
+  next();
+}
+function next(){
+  const s=S.sess;
+  if(s.n>=s.total) return result();
+  const t=nextType(s.filter,s.last,s.recent);
+  s.recent.push(t.id); if(s.recent.length>6) s.recent.shift();
+  s.last=t; s.type=t; s.cur=t.gen(); s.n++; s.done=false;
+  if(s.cur.kind==='order') s.cur.placed=[];
+  renderQ();
+}
+function renderQ(){
+  const s=S.sess, ex=s.cur, fam=FAMS[s.type.fam];
+  let body='';
+  if(ex.html) body+=ex.html;
+  if(ex.kind==='choice'){
+    body+=`<div class="opts" style="grid-template-columns:repeat(${ex.cols||1},1fr)">`+
+      ex.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')+`</div>`;
+  }else if(ex.kind==='inputs'){
+    const inl=ex.layout==='inline';
+    const cell=(fl,i)=>fl.fixed!==undefined
+      ? `<span class="fx">${fl.fixed}</span>`
+      : `<input class="num${inl?' sm':''}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" data-i="${i}">`;
+    if(ex.layout==='sentence'){
+      body+=`<div class="row">`+ex.fields.map((fl,i)=>`${fl.pre?`<span>${fl.pre}</span>`:''}${cell(fl,i)}${fl.post?`<span>${fl.post}</span>`:''}`).join('')+`</div>`;
+    }else if(inl){
+      body+=`<div class="row inline">`+ex.fields.map((fl,i)=>(i?`<span class="sep">${ex.sep||','}</span>`:'')+cell(fl,i)).join('')+`</div>`;
+    }else{
+      body+=ex.fields.map((fl,i)=>`<div class="row">${fl.pre?`<span>${fl.pre}</span>`:''}${cell(fl,i)}${fl.post?`<span>${fl.post}</span>`:''}</div>`).join('');
+    }
+  }else{
+    body+=`<div class="lbl">Zure ordena:</div><div class="tiles slots" id="slots"></div>
+      <div class="lbl">Zenbakiak:</div><div class="tiles" id="pool"></div>`;
+  }
+  app.innerHTML=`
+    <div class="top"><button class="x" id="quit">✕</button><div class="bar"><i id="pb"></i></div><div class="cnt">${s.n} / ${s.total}</div></div>
+    <div class="card">
+      <span class="chip">${fam.icon} ${fam.name}</span>
+      <p class="q">${ex.q}</p>
+      ${ex.note?`<p class="note">${ex.note}</p>`:''}
+      ${ex.big?`<div class="big${ex.bigSmall?' sm':''}">${ex.bigHtml?ex.big:esc(ex.big)}</div>`:''}
+      ${body}
+      <div id="fb"></div>
+      <button class="btn" id="act" ${ex.kind==='choice'?'style="display:none"':''}>Egiaztatu</button>
+    </div>`;
+  setProgress(false);
+  document.getElementById('quit').onclick=()=>{if(confirm('Saioa utzi nahi duzu?'))home();};
+  const act=document.getElementById('act');
+  act.onclick=()=>{ if(s.done) next(); else check(); };
+
+  if(ex.kind==='choice'){
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      if(s.done) return;
+      const i=+b.dataset.i, good=i===ex.answer;
+      app.querySelectorAll('.opt').forEach((o,k)=>{
+        o.disabled=true;
+        if(k===ex.answer) o.classList.add('ok');
+        else if(k===i) o.classList.add('ko');
+      });
+      finish(good,ex.explain||'');
+    });
+  }else if(ex.kind==='inputs'){
+    const ins=[...app.querySelectorAll('input.num')];
+    ins.forEach((inp,k)=>inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault(); if(ins[k+1]) ins[k+1].focus(); else check();}
+    }));
+    if(ins[0]) ins[0].focus();
+  }else{
+    drawOrder();
+  }
+}
+function setProgress(done){
+  const s=S.sess, pb=document.getElementById('pb');
+  if(pb) pb.style.width=Math.round(100*((s.n-1)+(done?1:0))/s.total)+'%';
+}
+function drawOrder(){
+  const s=S.sess, ex=s.cur;
+  const slots=document.getElementById('slots'), pool=document.getElementById('pool');
+  slots.innerHTML=ex.placed.map((v,i)=>`<button class="tile" data-p="${i}">${v}</button>`).join('');
+  pool.innerHTML=ex.items.filter(v=>!ex.placed.includes(v)).map(v=>`<button class="tile" data-v="${v}">${v}</button>`).join('');
+  const act=document.getElementById('act');
+  act.disabled=ex.placed.length!==ex.items.length;
+  if(s.done) return;
+  slots.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{ex.placed.splice(+b.dataset.p,1);drawOrder();});
+  pool.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{ex.placed.push(b.dataset.v);drawOrder();});
+}
+function check(){
+  const s=S.sess, ex=s.cur;
+  if(s.done) return;
+  if(ex.kind==='inputs'){
+    const ins=[...app.querySelectorAll('input.num')];
+    const empty=ins.find(i=>!i.value.trim());
+    if(empty){empty.focus();return;}
+    let all=true;
+    ins.forEach(inp=>{
+      const fl=ex.fields[+inp.dataset.i];
+      const v=parseInt(inp.value.replace(/[^\d]/g,''),10);
+      const good=v===fl.answer;
+      inp.classList.add(good?'ok':'ko'); inp.disabled=true;
+      if(!good) all=false;
+    });
+    finish(all,'Erantzun zuzena: '+ex.fields.filter(f=>f.fixed===undefined).map(f=>f.answer).join(' · '));
+  }else if(ex.kind==='order'){
+    const good=ex.placed.join(',')===ex.answer.join(',');
+    s.done=true;
+    document.querySelectorAll('#slots .tile').forEach((b,i)=>b.classList.add(b.textContent===ex.answer[i]?'ok':'ko'));
+    finish(good,'Ordena zuzena: '+ex.explain);
+  }
+}
+function finish(good,detail){
+  const s=S.sess;
+  s.done=true;
+  const st=DB.stats[s.type.id]||(DB.stats[s.type.id]={ok:0,ko:0});
+  if(good){st.ok++;s.score++;}else st.ko++;
+  save();
+  setProgress(true);
+  document.getElementById('fb').innerHTML=good
+    ? `<div class="fb ok">${pick(PRAISE)} ✅</div>`
+    : `<div class="fb ko">Ez da zuzena. ${detail}<small>${s.type.hint}</small></div>`;
+  const act=document.getElementById('act');
+  act.style.display='block';
+  act.disabled=false;
+  act.textContent=s.n>=s.total?'Emaitza ikusi':'Hurrengoa';
+  act.focus && act.blur();
+}
+function result(){
+  const s=S.sess;
+  const pc=s.score/s.total;
+  const stars=pc>=.9?3:pc>=.7?2:pc>=.5?1:0;
+  DB.sessions++; DB.stars+=stars;
+  const k=todayKey(); DB.days[k]=(DB.days[k]||0)+1;
+  save();
+  const msg=stars===3?'Bikain! Txapeldun bat zara!':stars===2?'Oso ondo! Ia-ia...':stars===1?'Ondo! Berriz saiatuz hobetuko duzu.':'Ez pasa ezer. Praktikatuz ikasten da!';
+  app.innerHTML=`
+    <div class="card">
+      <h1 style="text-align:center">Saioa amaitu da</h1>
+      <div class="score">${s.score} / ${s.total}</div>
+      <div class="stars">${'⭐'.repeat(stars)||'💪'}</div>
+      <p class="q" style="text-align:center">${msg}</p>
+      <button class="btn" id="again">🔁 Berriz hasi</button>
+      <button class="btn sec" id="home">🏠 Hasiera</button>
+    </div>`;
+  document.getElementById('again').onclick=()=>start(s.filter);
+  document.getElementById('home').onclick=home;
+}
+
+home();
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
