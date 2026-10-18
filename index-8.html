@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6fed">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Máel study">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Máel study</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+:root{--bg:#f3f6ff;--card:#fff;--ink:#1d2433;--mut:#6b7386;--pri:#2f6fed;--prid:#2457c5;--ok:#2e9d5b;--okbg:#e3f6ea;--ko:#d94444;--kobg:#fde8e8}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;min-height:100vh}
+#app{max-width:560px;margin:0 auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom));padding-top:max(16px,env(safe-area-inset-top))}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 2px 10px rgba(30,50,120,.08);margin-bottom:14px}
+h1{margin:0 0 4px;font-size:30px}
+h3{margin:0 0 10px}
+.mut{color:var(--mut);margin:4px 0}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:16px;font-size:19px;font-weight:700;background:var(--pri);color:#fff;cursor:pointer;margin-top:12px;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:#e4ebff;color:var(--prid)}
+.btn.small{padding:10px;font-size:16px;margin-top:8px}
+.btn:disabled{opacity:.4}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.bar{flex:1;height:12px;background:#dfe6fb;border-radius:8px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--pri);width:0;transition:width .3s}
+.x{border:0;background:#e4ebff;border-radius:12px;width:40px;height:40px;font-size:18px;color:var(--prid);font-family:inherit}
+.cnt{font-weight:700;color:var(--prid);min-width:64px;text-align:right}
+.chip{display:inline-block;background:#e4ebff;color:var(--prid);border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;margin-bottom:10px}
+.q{font-size:19px;margin:0 0 8px;font-weight:600}
+.note{font-size:15px;color:var(--mut);margin:0 0 8px}
+.big{font-size:44px;font-weight:800;text-align:center;letter-spacing:2px;margin:6px 0 12px}
+.big.sm{font-size:25px;letter-spacing:0;line-height:1.3}
+.blank{display:inline-block;min-width:44px;border:3px dashed #b8c6f0;border-radius:10px;color:#9aaad8}
+.opts{display:grid;gap:10px}
+.opt{border:2px solid #d5def5;background:#fff;border-radius:14px;padding:14px;font-size:19px;font-weight:700;font-family:inherit;color:var(--ink)}
+.opt:active{background:#eef2ff}
+.opt{min-width:0;overflow-wrap:anywhere}
+@media(max-width:350px){.opt{font-size:16px;padding:12px 6px}.big{font-size:38px}}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.ko{background:var(--kobg);border-color:var(--ko)}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0;font-size:19px}
+.row.inline{justify-content:center}
+input.num{width:116px;font-size:22px;font-weight:700;text-align:center;padding:10px;border:2px solid #c9d4f2;border-radius:12px;font-family:inherit;color:var(--ink)}
+input.num.sm{width:86px;font-size:20px;padding:10px 4px}
+input.num:focus{outline:none;border-color:var(--pri)}
+input.num.ok{border-color:var(--ok);background:var(--okbg)}
+input.num.ko{border-color:var(--ko);background:var(--kobg)}
+.fx{min-width:64px;text-align:center;background:#eef2ff;border-radius:12px;padding:10px 8px;font-weight:800;font-size:20px}
+.sep{font-weight:800;color:var(--mut)}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600;font-size:17px}
+.fb.ok{background:var(--okbg);color:#176b3a}
+.fb.hint{background:#fff6d6;color:#6b5300}
+.fb.ko{background:var(--kobg);color:#8f2121}
+.fb small{display:block;margin-top:6px;font-weight:500;font-size:15px}
+.lbl{font-size:14px;color:var(--mut);font-weight:700;margin:8px 0 4px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:56px;padding:6px;border-radius:14px}
+.tiles.slots{background:#eef2ff}
+.tile{border:2px solid #c9d4f2;background:#fff;border-radius:14px;padding:12px 16px;font-size:22px;font-weight:800;font-family:inherit;color:var(--ink)}
+.tile.ok{background:var(--okbg);border-color:var(--ok)}
+.tile.ko{background:var(--kobg);border-color:var(--ko)}
+.tokrow{margin:8px 0 12px}
+.tok{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#ffd66b;border:2px solid #d9a400;font-weight:800;font-size:14px;margin:3px}
+.tok.plate{border-radius:8px;width:52px;background:#c9d8ff;border-color:#6d8cdf}
+.fam{margin-bottom:14px}
+.grp{display:inline-block;margin:4px 10px 4px 0}
+.tk{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-size:11px;font-weight:800;color:#fff;margin:2px}
+.tk.t1000{background:#d9a400}.tk.t100{background:#2e9d5b}.tk.t10{background:#d94444}.tk.t1{background:#2aa6c4}
+.famhead{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+.stars{font-size:46px;text-align:center;margin:6px 0}
+.score{font-size:40px;font-weight:800;text-align:center}
+.lens{display:flex;align-items:center;gap:8px;margin-top:8px}
+.len{border:2px solid #d5def5;background:#fff;border-radius:12px;padding:8px 16px;font-size:18px;font-weight:800;font-family:inherit;color:var(--ink)}
+.len.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.goal{display:flex;justify-content:space-between;gap:10px;font-size:16px}
+.stk{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.stk .s{font-size:34px;background:#eef2ff;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center}
+.stk .s.lock{font-size:22px;opacity:.55}.stk small{font-size:12px;font-weight:700}
+.newstk{text-align:center;font-size:20px;font-weight:700;background:#fff6d6;border-radius:14px;padding:10px;margin:8px 0}.newstk b{font-size:38px;display:block}
+.pt{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0}
+.pt th,.pt td{border-bottom:1px solid #e3e9fa;padding:6px 4px;text-align:left}.pt td:nth-child(n+2),.pt th:nth-child(n+2){text-align:right}
+.wk{display:flex;gap:6px;align-items:flex-end;height:90px;margin:8px 0}
+.wk div{flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--mut)}
+.wk i{display:block;background:var(--pri);border-radius:6px 6px 0 0;margin-bottom:2px;min-height:3px}
+.pin{width:100%;text-align:center;font-size:28px;letter-spacing:10px;padding:12px;border:2px solid #c9d4f2;border-radius:12px;font-family:inherit}
+.sheet .pi{margin:0 0 14px;break-inside:avoid;font-size:17px}
+.sheet .pi .big{font-size:24px;letter-spacing:1px;text-align:left;margin:4px 0}
+.sheet .bl{display:inline-block;min-width:90px;border-bottom:2px solid #1d2433;height:22px;vertical-align:bottom;margin:0 4px}
+.sheet .po{display:inline-block;margin:2px 14px 2px 0;font-weight:700}
+.sheet .box{display:inline-block;border:2px solid #1d2433;border-radius:8px;padding:2px 10px;margin:3px;font-weight:700}
+.sheet .sol{font-size:14px;columns:2;margin-top:6px}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{background:#fff;font-size:14px}.noprint{display:none!important}#app{max-width:none;padding:0}.card{box-shadow:none;padding:0}.sheet .pi{font-size:15px}.pb{page-break-before:always}}
+.chip.rv{margin-left:6px;background:#fff0b8;color:#8a6200}
+.nl{width:100%;max-width:440px;display:block;margin:6px auto}
+.gt{width:100%;border-collapse:collapse;table-layout:fixed;margin:8px 0}
+.gt th{font-size:12px;background:#eef2ff;padding:6px 3px;border:1px solid #d5def5}
+.gt td{border:1px solid #d5def5;padding:4px;text-align:center;font-weight:800}
+.gt input.num{width:100%;min-width:0;font-size:16px;padding:8px 2px}
+.gbox{display:flex;gap:10px;align-items:center;border:2px solid #d5def5;border-radius:14px;padding:8px;margin:8px 0}
+.gbox>b{font-size:22px;color:var(--prid);min-width:26px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.col{border:2px solid #d5def5;border-radius:10px;padding:4px;text-align:center;min-height:60px}
+.colh{font-size:10px;font-weight:800;color:#fff;border-radius:6px;padding:2px 0;margin-bottom:4px}
+.colh.t1000{background:#d9a400}.colh.t100{background:#2e9d5b}.colh.t10{background:#d94444}.colh.t1{background:#2aa6c4}
+.col .tk{width:24px;height:24px;font-size:8px;margin:1px}
+.facts{margin:8px 0 12px;padding-left:20px;font-size:19px}
+.tapgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0}
+.tc{border:2px solid #d5def5;background:#fff;border-radius:8px;padding:6px 0;font-size:13px;font-weight:700;font-family:inherit;color:var(--ink)}
+.tc.on{background:#cfe0ff;border-color:var(--pri)}
+.tc.ok{background:var(--okbg);border-color:var(--ok)}
+.tc.ko{background:var(--kobg);border-color:var(--ko)}
+.tc.miss{background:#fff3c4;border-color:#d9a400}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.mt>div{display:grid;gap:8px;align-content:start}
+.mt button{border:3px solid #d5def5;background:#fff;border-radius:12px;padding:10px 6px;font-size:15px;font-weight:700;font-family:inherit;color:var(--ink);min-height:52px}
+.mt button.sel{border-color:var(--pri);box-shadow:0 0 0 3px #cfe0ff}
+.mt button.c0{background:#ffd9d9}.mt button.c1{background:#d9e8ff}.mt button.c2{background:#fff0b8}.mt button.c3{background:#d9f5e2}
+.mt button.ok{border-color:var(--ok)}.mt button.ko{border-color:var(--ko)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>Aplikazio honek JavaScript behar du.</noscript>
+<script>
+// ==GEN-START==
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+// Zenbakiak letraz (euskaraz)
+const UNI=['','bat','bi','hiru','lau','bost','sei','zazpi','zortzi','bederatzi','hamar','hamaika','hamabi','hamahiru','hamalau','hamabost','hamasei','hamazazpi','hamazortzi','hemeretzi'];
+const HOGEI=['hogei','berrogei','hirurogei','laurogei'];
+const EHUN=['','ehun','berrehun','hirurehun','laurehun','bostehun','seiehun','zazpiehun','zortziehun','bederatziehun'];
+function below100(n){
+  if(n<20) return UNI[n];
+  const t=Math.floor(n/20), r=n%20, base=HOGEI[t-1];
+  return r===0 ? base : base+'ta '+UNI[r];
+}
+function words(n){
+  const parts=[];
+  const th=Math.floor(n/1000), h=Math.floor(n%1000/100), r=n%100;
+  if(th) parts.push(th===1?'mila':UNI[th]+' mila');
+  if(h) parts.push(EHUN[h]);
+  if(r) parts.push(below100(r));
+  if(parts.length>1){ const last=parts.pop(); return parts.join(' ')+' eta '+last; }
+  return parts[0];
+}
+
+const POS=['milakoen','ehunekoen','hamarrekoen','batekoen'];
+const VAL=[1000,100,10,1];
+
+function distinctDigits(){
+  let d;
+  do{ d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,4); }while(d[0]===0);
+  return d;
+}
+function similar(n,count){
+  const set=new Set([n]);
+  const s=String(n).split('');
+  let tries=0;
+  while(set.size<count+1 && tries<300){
+    tries++;
+    const a=s.slice();
+    const L=s.length-1, i=rnd(0,L), j=rnd(0,L);
+    if(Math.random()<.5){ [a[i],a[j]]=[a[j],a[i]]; } else { a[i]=String(rnd(0,9)); }
+    if(a[0]==='0') continue;
+    set.add(+a.join(''));
+  }
+  return [...set].slice(1);
+}
+function mkChoice(correct,wrongs){
+  const opts=shuffle([correct,...wrongs]);
+  return {options:opts,answer:opts.indexOf(correct)};
+}
+
+function genPosizioa(){
+  const d=distinctDigits(), p=rnd(0,3), n=+d.join('');
+  return {kind:'choice',big:String(n),q:`${d[p]} zifra zein posizioan dago?`,options:POS.slice(),answer:p,cols:2,
+    explain:`${d[p]} zifra ${POS[p]} posizioan dago.`};
+}
+function genBalioa(){
+  const d=distinctDigits(), n=+d.join('');
+  const p=pick([0,1,2,3].filter(i=>d[i]!==0));
+  const v=d[p]*VAL[p];
+  return {kind:'inputs',big:String(n),q:'Idatzi zifraren balioa.',
+    fields:[{pre:`${d[p]} zifrak`,answer:v,post:'adierazten du.'}]};
+}
+function genDeskonposatu(){
+  let d;
+  do{ d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)]; }while(d.filter(x=>x).length<2);
+  const n=+d.join('');
+  const parts=d.map((x,i)=>x*VAL[i]).filter(x=>x);
+  return {kind:'inputs',layout:'inline',sep:'+',big:`${n} =`,
+    q:'Deskonposatu zenbakia milako, ehuneko, hamarreko eta batekoetan.',
+    note:'Adibidea: 4325 = 4000 + 300 + 20 + 5',
+    fields:parts.map(p=>({answer:p}))};
+}
+function genSegida(){
+  const step=pick([1,10,100,1000,25,50,500,200]);
+  const dir=Math.random()<.4?-1:1;
+  for(let t=0;t<2000;t++){
+    let start;
+    if(step===1) start=rnd(0,9995);
+    else if(step===10||step===100||step===1000) start=rnd(0,Math.floor(10000/step))*step+rnd(0,step-1);
+    else start=rnd(0,Math.floor(10000/step))*step;
+    const terms=[0,1,2,3,4,5].map(i=>start+dir*step*i);
+    if(!terms.every(x=>x>=0&&x<=10000)) continue;
+    const hid=shuffle([0,1,2,3,4,5]).slice(0,rnd(2,3));
+    let adj=false;
+    for(let i=0;i<5;i++) if(!hid.includes(i)&&!hid.includes(i+1)) adj=true;
+    if(!adj) continue;
+    return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida hau:',
+      fields:terms.map((x,i)=>hid.includes(i)?{answer:x}:{fixed:String(x)})};
+  }
+  return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida hau:',
+    fields:[1000,2000,3000,4000,5000,6000].map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+}
+function genSaltoka(){
+  const step=pick([5,6,7,8,9,25]);
+  const s0=step*rnd(1,4);
+  const terms=[0,1,2,3,4,5].map(i=>s0+step*i);
+  return {kind:'inputs',layout:'inline',sep:'→',q:`Zenbatu ${step}naka:`,
+    fields:terms.map((x,i)=>i<2?{fixed:String(x)}:{answer:x})};
+}
+function genAurrera(){
+  const fwd=Math.random()<.5;
+  const unit=pick([1000,100]);
+  const b=unit===1000?rnd(2,9)*1000:rnd(10,99)*100;
+  const terms=fwd?[b-3,b-2,b-1,b,b+1,b+2]:[b+3,b+2,b+1,b,b-1,b-2];
+  return {kind:'inputs',layout:'inline',sep:',',
+    q:fwd?'Zenbatu aurrerantz (batekoak):':'Zenbatu atzerantz (batekoak):',
+    fields:terms.map((x,i)=>i<3?{fixed:String(x)}:{answer:x})};
+}
+function genEhunekoak(){
+  const tok=(c,k)=>Array.from({length:k},()=>`<span class="tok ${c}">${c==='coin'?25:100}</span>`).join('');
+  let html,total;
+  if(Math.random()<.5){
+    const k=rnd(3,10);
+    html=`<div class="tokrow"><b>25eko poltsatxoak:</b><br>${tok('coin',k)}</div>`;
+    total=25*k;
+  }else{
+    const m=rnd(1,4), k=rnd(1,5);
+    html=`<div class="tokrow"><b>100eko plakak eta 25eko poltsatxoak:</b><br>${tok('plate',m)}${tok('coin',k)}</div>`;
+    total=100*m+25*k;
+  }
+  return {kind:'inputs',q:'Zenbatu taldeak eta idatzi guztira zenbat diren.',html,
+    fields:[{pre:'Guztira =',answer:total}]};
+}
+function genFalta(){
+  const d=pick([1,10,100,1000,100,10]);
+  const x=rnd(1100,8800);
+  const t=rnd(1,6);
+  let f;
+  if(t===1) f={pre:`${x+d} zenbakia`,answer:d,post:`gehiago da ${x} baino.`};
+  else if(t===2) f={pre:`${x} zenbakia`,answer:d,post:`gutxiago da ${x+d} baino.`};
+  else if(t===3) f={pre:`${x} zenbakia ${d} gehiago da`,answer:x-d,post:'baino.'};
+  else if(t===4) f={pre:`${x} zenbakia ${d} gutxiago da`,answer:x+d,post:'baino.'};
+  else if(t===5) f={pre:'',answer:x+d,post:`zenbakia ${d} gehiago da ${x} baino.`};
+  else f={pre:'',answer:x-d,post:`zenbakia ${d} gutxiago da ${x} baino.`};
+  return {kind:'inputs',q:'Argitu zer zenbaki falta den.',fields:[f]};
+}
+function genTaula(){
+  let n=rnd(1000,8999);
+  if(Math.random()<.4) n=pick([n-n%10+9,n-n%100+99,n-n%100,n-n%10]);
+  const ops=shuffle([1,10,100,1000,-1,-10,-100,-1000]).filter(o=>n+o>=0&&n+o<=9999).slice(0,3);
+  return {kind:'inputs',big:`Zenbakia: ${n}`,q:'Osatu taula:',
+    fields:ops.map(o=>({pre:`${Math.abs(o)} ${o>0?'gehiago':'gutxiago'}:`,answer:n+o}))};
+}
+function genLetraz(){
+  const n=rnd(1000,9999);
+  const c=mkChoice(cap(words(n)),similar(n,3).map(x=>cap(words(x))));
+  const eur=Math.random()<.4;
+  return {kind:'choice',big:eur?`${n} €`:String(n),
+    q:eur?'Zein da diru-kopuru hau letraz idatzita?':'Zein da zenbaki hau letraz idatzita?',
+    options:c.options,answer:c.answer,cols:1,
+    explain:`${n} = ${cap(words(n))}`};
+}
+function genZenbakira(){
+  const n=rnd(1000,9999);
+  const c=mkChoice(String(n),similar(n,3).map(String));
+  return {kind:'choice',big:cap(words(n)),bigSmall:true,q:'Zein zenbaki da?',options:c.options,answer:c.answer,cols:2,
+    explain:`${cap(words(n))} = ${n}`};
+}
+function genAlderatu(){
+  const a=Math.random()<.3?rnd(100,999):rnd(1000,9999);
+  const b=Math.random()<.15?a:(similar(a,1)[0]||a+1);
+  const ans=a<b?0:(a===b?1:2);
+  const sym=['<','=','>'][ans];
+  return {kind:'choice',q:'Alderatu zenbakiak. Zein ikur dago hutsunean?',
+    big:`${a} <span class="blank">?</span> ${b}`,bigHtml:true,
+    options:['<','=','>'],answer:ans,cols:3,explain:`${a} ${sym} ${b}`};
+}
+function genHandiena(){
+  const a=Math.random()<.3?rnd(100,999):rnd(1000,9999);
+  const nums=[a,...similar(a,3)];
+  const mode=pick(['handiena','txikiena']);
+  const best=mode==='handiena'?Math.max(...nums):Math.min(...nums);
+  const opts=shuffle(nums.map(String));
+  return {kind:'choice',q:`Aukeratu zenbaki ${mode}.`,options:opts,answer:opts.indexOf(String(best)),cols:2,
+    explain:`${best} da ${mode}.`};
+}
+function genOrdenatu(){
+  const a=Math.random()<.3?rnd(100,999):rnd(1000,9999);
+  const nums=shuffle([a,...similar(a,3)]);
+  const asc=Math.random()<.5;
+  const sorted=nums.slice().sort((x,y)=>asc?x-y:y-x).map(String);
+  return {kind:'order',q:asc?'Ordenatu zenbakiak txikienetik handienera:':'Ordenatu zenbakiak handienetik txikienera:',
+    items:nums.map(String),answer:sorted,explain:sorted.join(' , ')};
+}
+
+function gcd(a,b){return b?gcd(b,a%b):a;}
+function genOsatu(){
+  const d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)];
+  if(Math.random()<.5) d[rnd(1,3)]=0;
+  const n=+d.join('');
+  return {kind:'inputs',big:`${n} =`,q:'Osatu hutsuneak.',
+    fields:[{answer:d[0],post:'milako +'},{answer:d[1],post:'ehuneko +'},{answer:d[2],post:'hamarreko +'},{answer:d[3],post:'bateko'}]};
+}
+function genZifra(){
+  const d=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)];
+  const n=+d.join(''), p=rnd(0,3);
+  return {kind:'inputs',big:String(n),q:`Zer zifra dago ${POS[p]} posizioan?`,fields:[{answer:d[p]}]};
+}
+function genFitxak(){
+  const d=[rnd(1,6),rnd(0,5),rnd(0,5),rnd(0,5)];
+  if(Math.random()<.6) d[rnd(1,3)]=0;
+  const n=+d.join('');
+  const cls=['t1000','t100','t10','t1'];
+  const html=`<div class="tokrow">`+d.map((c,i)=>c?`<span class="grp">`+
+    Array.from({length:c},()=>`<span class="tk ${cls[i]}">${VAL[i]}</span>`).join('')+`</span>`:'').join('')+`</div>`;
+  return {kind:'inputs',q:'Zer zenbaki adierazten dute fitxek? Zenbatu eta idatzi.',html,
+    fields:[{pre:'Zenbakia =',answer:n}]};
+}
+function genEraiki(){
+  const d=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,4);
+  const big=Math.random()<.5;
+  const s=d.slice().sort((a,b)=>a-b);
+  const answer=big?+s.slice().reverse().join(''):+(s[0]===0?[s[1],s[0],s[2],s[3]]:s).join('');
+  const html=`<div class="row inline">`+d.map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'inputs',q:`Osatu ahal den 4 zifrako zenbaki ${big?'handiena':'txikiena'}, emandako lau zifrekin.`,html,
+    fields:[{pre:'Zenbakia =',answer}]};
+}
+function genHandiagoa(){
+  const a=rnd(1000,9999);
+  const b=similar(a,1)[0]||a+1;
+  const hi=Math.max(a,b), lo=Math.min(a,b);
+  const mode=pick(['handiagoa','txikiagoa']);
+  const html=`<div class="row inline">`+shuffle([hi,lo]).map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'inputs',layout:'sentence',q:'Alderatu zenbakiak eta bete hutsuneak.',html,
+    meta:{hi,lo,mode},
+    fields:[{answer:mode==='handiagoa'?hi:lo,post:`${mode} da`},{answer:mode==='handiagoa'?lo:hi,post:'baino.'}]};
+}
+function genProblema(){
+  const base=rnd(11,89)*100+rnd(0,99);
+  const d=pick([10,100,1000]);
+  const more=Math.random()<.5;
+  return {kind:'inputs',
+    q:`A ikastetxean ${base} ikasle daude. B ikastetxean ${d} ikasle ${more?'gehiago':'gutxiago'} daude A ikastetxean baino. Zenbat ikasle daude B ikastetxean?`,
+    fields:[{pre:'Erantzuna:',answer:more?base+d:base-d,post:'ikasle'}]};
+}
+function genBietan(){
+  const pairs=[[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[7,8],[7,9],[8,9]];
+  const [a,b]=shuffle(pick(pairs));
+  const l=a*b/gcd(a,b);
+  const seq=k=>[1,2,3,4].map(i=>k*i).join(', ')+'...';
+  return {kind:'inputs',meta:{a,b,l},
+    q:'Zein da bi segidetan ageri den lehenengo zenbakia?',
+    note:`${a}naka: ${seq(a)}   ${b}naka: ${seq(b)}`,
+    fields:[{pre:'Zenbakia =',answer:l}]};
+}
+
+// ============ Estilo berriak (3. bertsioa) ============
+function tokHtml(d){
+  const cls=['t1000','t100','t10','t1'];
+  return d.map((c,i)=>c?`<span class="grp">`+Array.from({length:c},()=>`<span class="tk ${cls[i]}">${VAL[i]}</span>`).join('')+`</span>`:'').join('');
+}
+function numLine(min,max,tick,every,val){
+  const W=320,x0=16,x1=304,y=56,n=Math.round((max-min)/tick);
+  const X=v=>x0+(v-min)/(max-min)*(x1-x0);
+  let s=`<svg viewBox="0 0 ${W} 100" class="nl" role="img">`;
+  s+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#1d2433" stroke-width="2.5"/>`;
+  for(let k=0;k<=n;k++){
+    const v=min+k*tick, big=k%every===0, x=X(v).toFixed(1);
+    s+=`<line x1="${x}" y1="${y-(big?10:6)}" x2="${x}" y2="${y+(big?10:6)}" stroke="#1d2433" stroke-width="${big?2.5:1.5}"/>`;
+    if(big) s+=`<text x="${x}" y="${y+28}" font-size="12" font-weight="700" text-anchor="middle" fill="#1d2433">${v}</text>`;
+  }
+  if(val!==null&&val!==undefined){
+    const ax=+X(val).toFixed(1);
+    s+=`<polygon points="${ax},${y-5} ${ax-8},${y-20} ${ax+8},${y-20}" fill="#d94444"/><line x1="${ax}" y1="${y-20}" x2="${ax}" y2="${y-36}" stroke="#d94444" stroke-width="3.5"/>`;
+  }
+  return s+'</svg>';
+}
+function genGezi(){
+  const sc=pick([
+    {min:0,max:500,tick:25,every:4},
+    {min:0,max:1000,tick:100,every:2},
+    {min:2000,max:3000,tick:100,every:2},
+    {min:4500,max:4600,tick:10,every:2},
+    {min:0,max:10000,tick:1000,every:2},
+    {min:100,max:200,tick:10,every:2}
+  ]);
+  const n=Math.round((sc.max-sc.min)/sc.tick);
+  const ks=[];for(let k=1;k<n;k++) ks.push(k);
+  const nonlab=ks.filter(k=>k%sc.every!==0);
+  const k=pick(Math.random()<.75&&nonlab.length?nonlab:ks);
+  const val=sc.min+k*sc.tick;
+  const html=numLine(sc.min,sc.max,sc.tick,sc.every,val);
+  const meta=Object.assign({},sc,{val});
+  if(Math.random()<.5){
+    return {kind:'inputs',q:'Zer zenbaki adierazten du geziak?',html,fields:[{pre:'Zenbakia =',answer:val}],meta};
+  }
+  const wr=[val-sc.tick,val+sc.tick,val+2*sc.tick,val-2*sc.tick].filter(x=>x>=sc.min&&x<=sc.max&&x!==val);
+  const opts=shuffle([val,...shuffle(wr).slice(0,3)]).map(String);
+  return {kind:'choice',q:'Zer zenbaki adierazten du geziak?',html,options:opts,answer:opts.indexOf(String(val)),cols:2,
+    explain:`Gezia ${val} zenbakian dago.`,meta};
+}
+function genLotu(){
+  const base=rnd(1000,9999);
+  const nums=[base,...similar(base,3)];
+  const left=nums.map(n=>cap(words(n)));
+  const rights=shuffle(nums.map((n,i)=>({t:String(n),o:i})));
+  return {kind:'match',q:'Lotu hitzak eta zenbakiak.',left,rights,
+    explain:nums.map(n=>cap(words(n))+' = '+n).join(' · ')};
+}
+function genTaulaGehiago(){
+  const more=Math.random()<.5;
+  let rows;
+  do{
+    rows=[0,1].map(()=>{ let n=rnd(1000,8999); if(Math.random()<.5) n=pick([n-n%10+9,n-n%100+99,n-n%100]); return n; });
+  }while(rows[0]===rows[1]);
+  const ops=[1,10,100], sg=more?1:-1, fields=[];
+  const gr=rows.map(n=>({label:String(n),cells:ops.map(o=>{fields.push({answer:n+sg*o});return fields.length-1;})}));
+  const w=more?'gehiago':'gutxiago';
+  return {kind:'inputs',q:`Osatu taula (${w} egin):`,
+    grid:{head:['Zenbakia',...ops.map(o=>`${o} ${w}`)],rows:gr},fields};
+}
+function genTaulaPos(){
+  let d,arr;
+  do{
+    d=rnd(1,9);
+    let others;
+    do{ others=[rnd(0,9),rnd(0,9),rnd(0,9)].filter(x=>x!==d); }while(others.length<3);
+    const digs=[d,...others], nums=new Set();
+    for(let g=0;g<200&&nums.size<3;g++){ const p=shuffle(digs); if(p[0]!==0) nums.add(p.join('')); }
+    arr=[...nums];
+  }while(arr.length<3);
+  const p=rnd(0,3), fields=[];
+  const rows=arr.map(s=>{
+    fields.push({answer:+s[p]});
+    fields.push({answer:d*VAL[s.indexOf(String(d))]});
+    return {label:s,cells:[fields.length-2,fields.length-1]};
+  });
+  return {kind:'inputs',q:'Osatu taula.',
+    grid:{head:['Zenbakia',`Zer zifra dago ${POS[p]} posizioan?`,`Zer adierazten du ${d} zifrak?`],rows},fields};
+}
+function genEraikiAukera(){
+  let D;
+  do{ D=[rnd(1,9),rnd(0,9),rnd(0,9),rnd(0,9)]; }while(new Set(D).size<2);
+  const key=x=>x.slice().sort().join('');
+  let gp;
+  do{ gp=shuffle(D); }while(gp[0]===0);
+  const good=gp.join('');
+  const wrong=new Set();
+  for(let g=0;g<800&&wrong.size<3;g++){
+    const a=D.slice(); a[rnd(0,3)]=rnd(0,9);
+    const p=shuffle(a);
+    if(p[0]===0||key(p)===key(D)) continue;
+    wrong.add(p.join(''));
+  }
+  const opts=shuffle([good,...wrong]);
+  const html=`<div class="row inline">`+D.map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'choice',q:'Zein zenbaki osa dezakezu lau zifra hauekin? Zifra bakoitza behin erabili behar duzu.',html,
+    options:opts,answer:opts.indexOf(good),cols:2,explain:`${good} zenbakia zifra horiekin osatzen da.`,meta:{D,good}};
+}
+function genHandienaFitxak(){
+  const cnt=pick([2,3]);
+  const base=[rnd(1,3),rnd(0,5),rnd(0,5),rnd(0,5)];
+  const seen=new Set([base.join('')]), list=[base];
+  for(let g=0;g<400&&list.length<cnt;g++){
+    const a=base.slice();
+    if(Math.random()<.5){ const i=rnd(0,3), j=rnd(0,3); [a[i],a[j]]=[a[j],a[i]]; } else a[rnd(0,3)]=rnd(0,5);
+    if(a[0]===0||a[0]>3||seen.has(a.join(''))) continue;
+    seen.add(a.join('')); list.push(a);
+  }
+  const groups=shuffle(list);
+  const nums=groups.map(a=>+a.join(''));
+  const mode=pick(['handiena','txikiena']);
+  const best=mode==='handiena'?Math.max(...nums):Math.min(...nums);
+  const L=['A','B','C'];
+  const html=groups.map((a,i)=>`<div class="gbox"><b>${L[i]}</b><div>${tokHtml(a)}</div></div>`).join('');
+  const opts=groups.map((a,i)=>L[i]);
+  return {kind:'choice',q:`Zein fitxa-taldek adierazten du zenbaki ${mode}?`,html,options:opts,answer:nums.indexOf(best),
+    cols:groups.length,explain:groups.map((a,i)=>`${L[i]} = ${nums[i]}`).join(', ')+`. ${best} da ${mode}.`,meta:{nums,mode}};
+}
+const CTX=[
+  {unit:'kg',sup:'astunena',inf:'arinena',desc:'astunenetik arinenera',asc:'arinenetik astunenera',
+    items:[['Hipopotamoa',2500],['Elefantea',5800],['Errinozeroa',2350],['Girafa',1200]]},
+  {unit:'kg',sup:'astunena',inf:'arinena',desc:'astunenetik arinenera',asc:'arinenetik astunenera',
+    items:[['Autoa',1200],['Furgoneta',2300],['Kamioia',7500],['Autobusa',9800]]},
+  {unit:'m',sup:'altuena',inf:'baxuena',desc:'altuenetik baxuenera',asc:'baxuenetik altuenera',
+    items:[['Everest',8848],['K2',8611],['Aconcagua',6961],['Kilimanjaro',5895],['Mont Blanc',4806],['Teide',3715],['Mulhacén',3479],['Aneto',3404]]}
+];
+function genTestuingurua(){
+  const c=pick(CTX);
+  const cnt=pick([3,3,4]);
+  const its=shuffle(c.items).slice(0,cnt);
+  const html=`<ul class="facts">`+its.map(([n,v])=>`<li><b>${n}</b>: ${v} ${c.unit}</li>`).join('')+`</ul>`;
+  const mode=pick(['sup','inf','ord']);
+  const sorted=its.slice().sort((a,b)=>b[1]-a[1]);
+  if(mode==='ord'){
+    const dsc=Math.random()<.5;
+    const ans=(dsc?sorted:sorted.slice().reverse()).map(x=>x[0]);
+    return {kind:'order',q:`Ordenatu ${dsc?c.desc:c.asc}:`,html,items:its.map(x=>x[0]),answer:ans,
+      explain:(dsc?sorted:sorted.slice().reverse()).map(x=>`${x[0]} (${x[1]})`).join(' , '),meta:{its,dsc}};
+  }
+  const best=mode==='sup'?sorted[0]:sorted[sorted.length-1];
+  const opts=its.map(x=>x[0]);
+  return {kind:'choice',q:`Zein da ${mode==='sup'?c.sup:c.inf}?`,html,options:opts,answer:opts.indexOf(best[0]),cols:2,
+    explain:`${best[0]} da ${mode==='sup'?c.sup:c.inf}: ${best[1]} ${c.unit}.`,meta:{its,mode}};
+}
+function genHurrengoak(){
+  const step=pick([1,10,100,1000]), dir=Math.random()<.5?-1:1;
+  for(let t=0;t<3000;t++){
+    const start=rnd(1000,9999);
+    const terms=[0,1,2,3,4,5,6,7,8].map(i=>start+dir*step*i);
+    if(terms.every(x=>x>=1000&&x<=9999)){
+      return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida: idatzi hurrengo hiru zenbakiak.',
+        fields:terms.map((x,i)=>i<6?{fixed:String(x)}:{answer:x}),meta:{step,dir}};
+    }
+  }
+  return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida: idatzi hurrengo hiru zenbakiak.',
+    fields:[1000,1100,1200,1300,1400,1500,1600,1700,1800].map((x,i)=>i<6?{fixed:String(x)}:{answer:x}),meta:{step:100,dir:1}};
+}
+function genJauziak(){
+  for(;;){
+    const start=rnd(1000,9000);
+    const jumps=Array.from({length:3},()=>pick([1,10,100,1000])*pick([1,-1]));
+    let v=start, ok=true;
+    for(const j of jumps){ v+=j; if(v<1000||v>9999) ok=false; }
+    if(!ok) continue;
+    const txt=[start,...jumps.map(j=>(j>0?'+':'-')+Math.abs(j)),'?'].join(' → ');
+    return {kind:'inputs',q:'Zenbaki-zuzenean jauziak egin dira. Zein zenbakitan amaitzen da?',big:txt,bigSmall:true,
+      fields:[{pre:'Amaiera =',answer:v}],meta:{start,jumps}};
+  }
+}
+function genTap(){
+  const k=pick([6,7,8,9]);
+  const answer=[];
+  for(let i=k;i<=60;i+=k) answer.push(i);
+  return {kind:'tap',q:`Zenbatu ${k}naka eta ukitu zenbaki horiek.`,max:60,k,answer};
+}
+function genProblemaBi(){
+  const d=pick([10,100,1000]);
+  const base=rnd(1,8)*1000+rnd(0,999);
+  return {kind:'inputs',
+    q:`A ikastetxean ${base} ikasle daude. B ikastetxean ${d} ikasle gutxiago daude A ikastetxean baino. C ikastetxean ${d} ikasle gehiago daude A ikastetxean baino.`,
+    fields:[{pre:'Zenbat ikasle daude B ikastetxean?',answer:base-d},{pre:'Zenbat ikasle daude C ikastetxean?',answer:base+d}],
+    meta:{base,d}};
+}
+function genBalioak3(){
+  const d=rnd(1,9);
+  const ps=shuffle([0,1,2,3]).slice(0,3);
+  const fields=ps.map(p=>{
+    let digs;
+    do{ digs=Array.from({length:4},()=>rnd(0,9)); digs[p]=d; }while(digs.some((x,i)=>i!==p&&x===d)||digs[0]===0);
+    return {pre:`${digs.join('')}:`,answer:d*VAL[p]};
+  });
+  return {kind:'inputs',q:`${d} zifrak zer adierazten du zenbaki bakoitzean?`,fields};
+}
+function genFitxaZutabeak(){
+  const dg=[rnd(1,6),rnd(0,7),rnd(0,7),rnd(0,7)];
+  if(Math.random()<.5) dg[rnd(1,3)]=0;
+  const n=+dg.join('');
+  const names=['milakoak','ehunekoak','hamarrekoak','batekoak'], cls=['t1000','t100','t10','t1'];
+  const html=`<div class="cols">`+dg.map((c,i)=>`<div class="col"><div class="colh ${cls[i]}">${names[i]}</div>`+
+    Array.from({length:c},()=>`<span class="tk ${cls[i]}">${VAL[i]}</span>`).join('')+`</div>`).join('')+`</div>`;
+  const p=rnd(0,3);
+  return {kind:'inputs',q:'Begiratu fitxak zutabeetan.',html,
+    fields:[{pre:'Zenbakia =',answer:n},{pre:`Zer zifra dago ${POS[p]} posizioan?`,answer:dg[p]}],meta:{dg}};
+}
+function genBaliokidea(){
+  const U=[['bateko','hamarreko'],['hamarreko','ehuneko'],['ehuneko','milako']];
+  const [small,big]=pick(U);
+  const N=rnd(11,99);
+  return {kind:'inputs',layout:'sentence',q:`Osatu. 10 ${small} = 1 ${big}.`,
+    fields:[{pre:`${N} ${small} =`,answer:Math.floor(N/10),post:`${big} +`},{answer:N%10,post:small}],meta:{small,big,N}};
+}
+function genDorreak(){
+  const info='Kaxa bakoitzean 100 sagar daude. Dorre bakoitzean 10 kaxa daude (1000 sagar).';
+  const t=rnd(1,3);
+  let text,ans;
+  if(t===1){ const a=rnd(2,9); text=`${a} kaxa daude.`; ans=100*a; }
+  else if(t===2){ const d=rnd(1,6), k=rnd(1,9); text=`${d} dorre eta ${k} kaxa daude.`; ans=1000*d+100*k; }
+  else{
+    const d=rnd(1,5), k=rnd(1,9), h=rnd(1,9), b=rnd(1,9);
+    text=`${d} dorre, ${k} kaxa, ${h} poltsa eta ${b} sagar solte daude. Poltsa bakoitzean 10 sagar daude.`;
+    ans=1000*d+100*k+10*h+b;
+  }
+  return {kind:'inputs',q:`${info} ${text} Zenbat sagar daude guztira?`,fields:[{pre:'Sagarrak =',answer:ans}]};
+}
+function genEhunakaFitxak(){
+  const m=rnd(1,6), k=rnd(1,9);
+  return {kind:'inputs',q:'Zenbatu 100naka eta gero 10naka. Zenbat dira guztira?',
+    html:`<div class="tokrow">${tokHtml([0,m,k,0])}</div>`,fields:[{pre:'Guztira =',answer:100*m+10*k}],meta:{m,k}};
+}
+function genSegidaArau(){
+  const step=pick([1,10,100,1000]), dir=Math.random()<.5?-1:1;
+  for(let t=0;t<3000;t++){
+    const start=rnd(1000,9999);
+    const terms=[0,1,2,3,4,5].map(i=>start+dir*step*i);
+    if(terms.every(x=>x>=1000&&x<=9999)){
+      return {kind:'inputs',layout:'inline',sep:',',q:`Osatu zenbaki-segida hau arauari jarraituz (${dir>0?'+':'-'}${step}):`,
+        fields:terms.map((x,i)=>i<3?{fixed:String(x)}:{answer:x}),meta:{step,dir}};
+    }
+  }
+  return {kind:'inputs',layout:'inline',sep:',',q:'Osatu zenbaki-segida hau arauari jarraituz (+100):',
+    fields:[4120,4220,4320,4420,4520,4620].map((x,i)=>i<3?{fixed:String(x)}:{answer:x}),meta:{step:100,dir:1}};
+}
+function genFitxakLetraz(){
+  const dg=[rnd(1,5),rnd(0,5),rnd(0,5),rnd(0,5)];
+  const n=+dg.join('');
+  const c=mkChoice(cap(words(n)),similar(n,3).map(x=>cap(words(x))));
+  return {kind:'choice',q:'Zenbatu fitxak. Zein da zenbakiaren izena letraz?',html:`<div class="tokrow">${tokHtml(dg)}</div>`,
+    options:c.options,answer:c.answer,cols:1,explain:`${n} = ${cap(words(n))}`,meta:{dg,n}};
+}
+function genHandienaTxikiena(){
+  const a=Math.random()<.3?rnd(100,999):rnd(1000,9999);
+  const nums=shuffle([a,...similar(a,3)]);
+  const html=`<div class="row inline">`+nums.map(x=>`<span class="fx">${x}</span>`).join('')+`</div>`;
+  return {kind:'inputs',layout:'sentence',q:'Idatzi zenbaki handiena eta txikiena.',html,
+    fields:[{pre:'Handiena:',answer:Math.max(...nums)},{pre:'Txikiena:',answer:Math.min(...nums)}],meta:{nums}};
+}
+function genGogoz(){
+  const n=rnd(2,7)*1000+rnd(100,999);
+  const ds=shuffle([1,10,100,1000]).slice(0,3);
+  const fields=ds.map(d=>{
+    const more=Math.random()<.5;
+    return {pre:`${n} baino ${d} ${more?'gehiago':'gutxiago'}:`,answer:n+(more?d:-d)};
+  });
+  return {kind:'inputs',q:'Kalkulatu gogoz eta osatu erantzunak.',fields};
+}
+
+const FAMS={
+  pos:{name:'Posizio-balioa',icon:'🔢'},
+  zen:{name:'Zenbatzea eta segidak',icon:'➕'},
+  ald:{name:'Gehiago eta gutxiago',icon:'⬆️'},
+  ide:{name:'Letraz eta zenbakiz',icon:'✏️'},
+  com:{name:'Alderatzea eta ordenatzea',icon:'⚖️'},
+  pro:{name:'Problemak',icon:'🧩'}
+};
+const TYPES=[
+  {id:'posizioa',fam:'pos',gen:genPosizioa,hint:'Eskuinetik ezkerrera: batekoak, hamarrekoak, ehunekoak, milakoak.'},
+  {id:'balioa',fam:'pos',gen:genBalioa,hint:'Zifra baten balioa bere posizioaren araberakoa da: milakoak 1000, ehunekoak 100, hamarrekoak 10.'},
+  {id:'deskonposatu',fam:'pos',gen:genDeskonposatu,hint:'Idatzi zifra bakoitza bere balioarekin: milakoak, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'segida',fam:'zen',gen:genSegida,hint:'Begiratu zenbat gehitzen edo kentzen den zenbaki batetik bestera.'},
+  {id:'saltoka',fam:'zen',gen:genSaltoka,hint:'Gehitu beti zenbaki bera aurreko zenbakiari.'},
+  {id:'aurrera',fam:'zen',gen:genAurrera,hint:'Kontuz zenbaki borobilarekin: 3999 + 1 = 4000.'},
+  {id:'ehunekoak',fam:'zen',gen:genEhunekoak,hint:'Zenbatu taldeak: 25, 50, 75, 100...'},
+  {id:'falta',fam:'ald',gen:genFalta,hint:'Zenbat doa batetik bestera? 1, 10, 100 edo 1000?'},
+  {id:'taula',fam:'ald',gen:genTaula,hint:'10 gehiago: hamarrekoen zifra bat gehiago. 100 gehiago: ehunekoena. 1000 gehiago: milakoena.'},
+  {id:'letraz',fam:'ide',gen:genLetraz,hint:'Irakurri zatika: mila, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'zenbakira',fam:'ide',gen:genZenbakira,hint:'Irakurri zatika: mila, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'alderatu',fam:'com',gen:genAlderatu,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'handiena',fam:'com',gen:genHandiena,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'ordenatu',fam:'com',gen:genOrdenatu,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'osatu',fam:'pos',gen:genOsatu,hint:'Zifra bakoitza bere postuan dago: milakoak, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'zifra',fam:'pos',gen:genZifra,hint:'Eskuinetik ezkerrera: batekoak, hamarrekoak, ehunekoak, milakoak.'},
+  {id:'fitxak',fam:'pos',gen:genFitxak,hint:'Hori = 1000, berdea = 100, gorria = 10, urdina = 1. Fitxarik ez badago, zifra 0 da.'},
+  {id:'eraiki',fam:'pos',gen:genEraiki,hint:'Handiena: zifra handienak ezkerrean. Txikiena: zifra txikienak ezkerrean, baina 0 ez da lehena izan.'},
+  {id:'bietan',fam:'zen',gen:genBietan,hint:'Idatzi bi segidak eta bilatu zein den lehen zenbaki berdina.'},
+  {id:'problema',fam:'pro',gen:genProblema,hint:'Gehiago: gehitu. Gutxiago: kendu.'},
+  {id:'handiagoa',fam:'com',gen:genHandiagoa,hint:'Alderatu zifrak ezkerretik: milakoak, gero ehunekoak...'},
+  {id:'gezi',fam:'zen',gen:genGezi,hint:'Begiratu bi marka handien artean zenbat gehitzen den marka bakoitzean.'},
+  {id:'lotu',fam:'ide',gen:genLotu,hint:'Irakurri zatika: mila, ehunekoak, hamarrekoak eta batekoak.'},
+  {id:'taulaGehiago',fam:'ald',gen:genTaulaGehiago,hint:'1 aldatzen bada, batekoen zifra aldatzen da. 10 bada, hamarrekoena. 100 bada, ehunekoena.'},
+  {id:'taulaPos',fam:'pos',gen:genTaulaPos,hint:'Aurkitu zifra zenbakian eta begiratu zein posizioan dagoen.'},
+  {id:'eraikiAukera',fam:'pos',gen:genEraikiAukera,hint:'Zenbaki zuzenak lau zifra berak behar ditu, ez gehiago eta ez gutxiago.'},
+  {id:'handienaFitxak',fam:'com',gen:genHandienaFitxak,hint:'Hasi milako fitxekin, gero ehunekoekin, hamarrekoekin eta batekoekin.'},
+  {id:'testuingurua',fam:'pro',gen:genTestuingurua,hint:'Alderatu zenbakiak ezkerreko zifratik hasita.'},
+  {id:'hurrengoak',fam:'zen',gen:genHurrengoak,hint:'Begiratu zein zifra aldatzen den segida batean: batekoak, hamarrekoak, ehunekoak edo milakoak.'},
+  {id:'jauziak',fam:'ald',gen:genJauziak,hint:'Egin jauzi bakoitza ordenan. Gehi = gehitu, ken = kendu.'},
+  {id:'tap',fam:'zen',gen:genTap,hint:'Zenbatu salto berdinekin: gehitu beti zenbaki bera.'},
+  {id:'problemaBi',fam:'pro',gen:genProblemaBi,hint:'Gutxiago: kendu. Gehiago: gehitu.'},
+  {id:'balioak3',fam:'pos',gen:genBalioak3,hint:'Zifra baten balioa bere posizioaren araberakoa da.'},
+  {id:'fitxaZutabeak',fam:'pos',gen:genFitxaZutabeak,hint:'Zutabe bakoitzeko fitxak zifra bat dira. Fitxarik ez badago, zifra 0 da.'},
+  {id:'baliokidea',fam:'pos',gen:genBaliokidea,hint:'10 unitate txiki = 1 unitate handiago. Zatitu 10ekin.'},
+  {id:'dorreak',fam:'pro',gen:genDorreak,hint:'Dorrea = 1000, kaxa = 100, poltsa = 10. Gehitu denak.'},
+  {id:'ehunakaFitxak',fam:'zen',gen:genEhunakaFitxak,hint:'Zenbatu 100naka lehenengo eta 10naka gero.'},
+  {id:'segidaArau',fam:'zen',gen:genSegidaArau,hint:'Aplikatu araua zenbaki bakoitzari.'},
+  {id:'fitxakLetraz',fam:'ide',gen:genFitxakLetraz,hint:'Lehenengo zenbatu fitxak eta gero irakurri zenbakia letraz.'},
+  {id:'handienaTxikiena',fam:'com',gen:genHandienaTxikiena,hint:'Hasi ezkerreko zifratik: milakoak, gero ehunekoak...'},
+  {id:'gogoz',fam:'ald',gen:genGogoz,hint:'1 aldatzen bada, batekoak. 10 bada, hamarrekoak. 100 bada, ehunekoak. 1000 bada, milakoak.'}
+];
+// ==GEN-END==
+
+// ---------- Datuak ----------
+const KEY='maelStudy.v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};}}
+const DB=Object.assign({stats:{},sessions:0,stars:0,days:{},sound:true,len:10,best:0,pin:''},load());
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+function dateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function todayKey(){return dateKey(new Date());}
+function streak(){let n=0;const d=new Date();if(!DB.days[dateKey(d)]) d.setDate(d.getDate()-1);while(DB.days[dateKey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
+function weakTypes(){return TYPES.filter(t=>DB.stats[t.id]&&DB.stats[t.id].ko>0).sort((a,b)=>{const f=t=>{const s=DB.stats[t.id];return s.ko/(s.ok+s.ko);};return f(b)-f(a)||DB.stats[b.id].ko-DB.stats[a.id].ko;}).slice(0,6);}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const STICKERS=[['🐣',3],['🐢',6],['🐶',10],['🐱',15],['🦊',20],['🐼',30],['🦁',40],['🐬',50],['🦄',65],['🐉',80],['🚀',100],['🏆',120]].map(([e,at])=>({e,at}));
+const PRAISE=['Zuzen!','Bikain!','Oso ondo!','Primeran!','Ederki!','Bejondeizula!'];
+
+const app=document.getElementById('app');
+const S={sess:null};
+
+// ---------- Soinua ----------
+let AC=null;
+function audioCtx(){
+  try{
+    if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C) AC=new C(); }
+    if(AC&&AC.state==='suspended') AC.resume();
+  }catch(e){ AC=null; }
+  return AC;
+}
+function tone(freq,t0,dur,type,vol){
+  const ac=AC, t=ac.currentTime+t0;
+  const o=ac.createOscillator(), g=ac.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(ac.destination);
+  o.start(t); o.stop(t+dur+0.05);
+}
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ if(DB.sound) audioCtx(); },{once:true,passive:true}));
+function sound(ok){
+  if(!DB.sound) return;
+  try{
+    if(!audioCtx()) return;
+    if(ok){ tone(880,0,.14,'sine',.3); tone(1320,.12,.26,'sine',.3); }
+    else{ tone(196,0,.2,'square',.12); tone(147,.18,.34,'square',.12); }
+  }catch(e){}
+}
+function toggleSound(btn,withText){
+  DB.sound=!DB.sound; save();
+  btn.textContent=withText?(DB.sound?'🔊 Soinua: piztuta':'🔇 Soinua: itzalita'):(DB.sound?'🔊':'🔇');
+  if(DB.sound) sound(true);
+}
+
+// ---------- Ariketa aukeraketa (nahastuta eta pisuekin) ----------
+function nextType(filter,last){
+  const pool=filter==='fails'?weakTypes():TYPES.filter(t=>!filter||t.fam===filter);
+  let cand=filter?pool.filter(t=>!last||t.id!==last.id):pool.filter(t=>!last||t.fam!==last.fam);
+  if(!cand.length) cand=pool;
+  const w=cand.map(t=>{const s=DB.stats[t.id]||{ok:0,ko:0};return 1+3*(s.ko/(s.ok+s.ko+1));});
+  let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<cand.length;i++){r-=w[i];if(r<=0)return cand[i];}
+  return cand[cand.length-1];
+}
+
+// ---------- Hasiera ----------
+function home(){
+  clearInterval(S.timer); S.sess=null;
+  const td=DB.days[todayKey()]||0, weak=weakTypes();
+  const famHtml=Object.entries(FAMS).map(([k,f])=>{
+    let ok=0,ko=0;
+    TYPES.filter(t=>t.fam===k).forEach(t=>{const s=DB.stats[t.id];if(s){ok+=s.ok;ko+=s.ko;}});
+    const tot=ok+ko, pct=tot?Math.round(100*ok/tot):0;
+    return `<div class="fam"><div class="famhead"><span>${f.icon} ${f.name}</span><span>${tot?pct+'%':'-'}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <button class="btn sec small" data-fam="${k}">Praktikatu</button></div>`;
+  }).join('');
+  app.innerHTML=`
+    <div class="card"><h1>Máel study</h1>
+      <p class="mut">Matematika berrikuspena. 1. unitatea: 10 000ra arteko zenbakiak.</p>
+      <button class="btn" id="go">🚀 Hasi berrikuspena</button>
+      <p class="mut">${DB.len||10} ariketa, gai guztiak nahastuta.</p>
+      <div class="lens">${[5,10,20].map(n=>`<button class="len${(DB.len||10)===n?' on':''}" data-len="${n}">${n}</button>`).join('')}<span class="mut">ariketa saioko</span></div></div>
+    <div class="card"><button class="btn sec" id="chal" style="margin-top:0">⏱️ Erronka: 60 segundo</button>
+      <p class="mut">Ahalik eta ariketa gehien egin. Errekorra: <b>${DB.best||0}</b></p></div>
+    <div class="card goal"><div><b>🔥 ${streak()}</b> egun jarraian</div>
+      <div>${td?'✅ Gaurko helburua beteta':'⬜ Gaurko helburua: saio 1'}</div></div>
+    <div class="card"><b>⭐ ${DB.stars}</b> izar &nbsp;·&nbsp; <b>🎯 ${DB.sessions}</b> saio &nbsp;·&nbsp; Gaur: <b>${td}</b>
+      <button class="btn sec small" id="sndh">${DB.sound?'🔊 Soinua: piztuta':'🔇 Soinua: itzalita'}</button></div>
+    <div class="card"><h3>🎁 Pegatinak (${STICKERS.filter(x=>DB.stars>=x.at).length}/${STICKERS.length})</h3><div class="stk">${STICKERS.map(x=>DB.stars>=x.at?`<span class="s">${x.e}</span>`:`<span class="s lock">🔒<small>${x.at}⭐</small></span>`).join('')}</div></div>
+    <div class="card"><button class="btn sec small" id="par" style="margin-top:0">👨‍👧 Gurasoentzako gunea</button></div>
+    <div class="card"><h3>Gaika praktikatu</h3>${weak.length?`<div class="fam"><div class="famhead"><span>🎯 Zailenak</span><span>${weak.length} gai</span></div>
+      <p class="mut" style="margin:0 0 4px">Gehien huts egiten dituzun ariketak.</p><button class="btn small" data-fam="fails">Praktikatu</button></div>`:''}${famHtml}</div>
+    <p class="mut" style="text-align:center;font-size:13px">Bertsioa 8</p>`;
+  document.getElementById('go').onclick=()=>start(null);
+  document.getElementById('chal').onclick=startChallenge;
+  document.getElementById('par').onclick=parents;
+  document.getElementById('sndh').onclick=e=>toggleSound(e.currentTarget,true);
+  app.querySelectorAll('[data-fam]').forEach(b=>b.onclick=()=>start(b.dataset.fam));
+  app.querySelectorAll('[data-len]').forEach(b=>b.onclick=()=>{DB.len=+b.dataset.len;save();home();});
+}
+
+// ---------- Saioa ----------
+function start(filter){
+  S.sess={filter,n:0,total:DB.len||10,score:0,last:null,done:false,review:false,missed:[]};
+  next();
+}
+function startChallenge(){
+  clearInterval(S.timer);
+  const s=S.sess={filter:null,n:0,total:9999,score:0,last:null,done:false,review:false,timed:true,missed:[],t0:Date.now(),limit:60};
+  S.timer=setInterval(()=>{
+    if(S.sess!==s){clearInterval(S.timer);return;}
+    const left=Math.max(0,s.limit-Math.round((Date.now()-s.t0)/1000));
+    const c=document.getElementById('cnt'); if(c) c.textContent='⏱️ '+left;
+    const pb=document.getElementById('pb'); if(pb) pb.style.width=Math.round(100*(1-left/s.limit))+'%';
+    if(left<=0){clearInterval(S.timer);challengeResult();}
+  },250);
+  next();
+}
+function quickEx(last){
+  for(let i=0;i<40;i++){
+    const t=nextType(null,last), ex=t.gen();
+    const free=ex.kind==='inputs'?ex.fields.filter(f=>f.fixed===undefined).length:0;
+    if(ex.kind==='choice'||(ex.kind==='inputs'&&free===1&&!ex.grid)) return {t,ex};
+  }
+  const t=TYPES[0]; return {t,ex:t.gen()};
+}
+function challengeResult(){
+  const s=S.sess; if(!s) return;
+  const rec=s.score>(DB.best||0); if(rec){DB.best=s.score;save();}
+  app.innerHTML=`<div class="card">
+    <h1 style="text-align:center">Denbora amaitu da!</h1>
+    <div class="score">${s.score}</div>
+    <p class="q" style="text-align:center">ariketa zuzen 60 segundotan</p>
+    <div class="stars">${rec?'🏅':'⏱️'}</div>
+    <p class="q" style="text-align:center">${rec?'Errekor berria!':'Errekorra: '+DB.best}</p>
+    <p class="note" style="text-align:center">Erronkak ez du izarretan eta estatistiketan kontatzen.</p>
+    <button class="btn" id="again">⏱️ Berriz saiatu</button>
+    <button class="btn sec" id="home">🏠 Hasiera</button></div>`;
+  document.getElementById('again').onclick=startChallenge;
+  document.getElementById('home').onclick=home;
+}
+function startReview(items,filter){
+  S.sess={filter,n:0,total:items.length,score:0,last:null,done:false,review:true,queue:items,missed:[]};
+  next();
+}
+function next(){
+  const s=S.sess;
+  if(s.n>=s.total) return result();
+  if(s.review){
+    const it=s.queue[s.n];
+    s.last=it.type; s.type=it.type; s.cur=prepare(it.ex); s.n++; s.done=false;
+    return renderQ();
+  }
+  if(s.timed){ const q=quickEx(s.last); s.last=q.t; s.type=q.t; s.cur=prepare(q.ex); s.n++; s.done=false; return renderQ(); }
+  const t=nextType(s.filter,s.last);
+  s.last=t; s.type=t; s.cur=prepare(t.gen()); s.n++; s.done=false;
+  renderQ();
+}
+function prepare(ex){
+  if(ex.kind==='order') ex.placed=[];
+  if(ex.kind==='match'){ ex.map=ex.left.map(()=>-1); ex.sel=null; }
+  if(ex.kind==='tap') ex.sel=[];
+  return ex;
+}
+function renderQ(){
+  const s=S.sess, ex=s.cur, fam=FAMS[s.type.fam];
+  let body='';
+  if(ex.html) body+=ex.html;
+  if(ex.kind==='choice'){
+    body+=`<div class="opts" style="grid-template-columns:repeat(${ex.cols||1},minmax(0,1fr))">`+
+      ex.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')+`</div>`;
+  }else if(ex.kind==='inputs'){
+    const inl=ex.layout==='inline';
+    const cell=(fl,i)=>fl.fixed!==undefined
+      ? `<span class="fx">${fl.fixed}</span>`
+      : `<input class="num${inl?' sm':''}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" data-i="${i}">`;
+    if(ex.grid){
+      body+=`<table class="gt"><tr>`+ex.grid.head.map(h=>`<th>${h}</th>`).join('')+`</tr>`+
+        ex.grid.rows.map(r=>`<tr><td>${r.label}</td>`+r.cells.map(ci=>`<td>${cell(ex.fields[ci],ci)}</td>`).join('')+`</tr>`).join('')+`</table>`;
+    }else if(ex.layout==='sentence'){
+      body+=`<div class="row">`+ex.fields.map((fl,i)=>`${fl.pre?`<span>${fl.pre}</span>`:''}${cell(fl,i)}${fl.post?`<span>${fl.post}</span>`:''}`).join('')+`</div>`;
+    }else if(inl){
+      body+=`<div class="row inline">`+ex.fields.map((fl,i)=>(i?`<span class="sep">${ex.sep||','}</span>`:'')+cell(fl,i)).join('')+`</div>`;
+    }else{
+      body+=ex.fields.map((fl,i)=>`<div class="row">${fl.pre?`<span>${fl.pre}</span>`:''}${cell(fl,i)}${fl.post?`<span>${fl.post}</span>`:''}</div>`).join('');
+    }
+  }else if(ex.kind==='order'){
+    body+=`<div class="lbl">Zure ordena:</div><div class="tiles slots" id="slots"></div>
+      <div class="lbl">Zenbakiak:</div><div class="tiles" id="pool"></div>`;
+  }else if(ex.kind==='match'){
+    body+=`<div class="mt"><div id="ml"></div><div id="mr"></div></div>`;
+  }else if(ex.kind==='tap'){
+    body+=`<div class="tapgrid">`+Array.from({length:ex.max},(_,i)=>`<button class="tc" data-n="${i+1}">${i+1}</button>`).join('')+`</div>`;
+  }
+  app.innerHTML=`
+    <div class="top"><button class="x" id="quit">✕</button><div class="bar"><i id="pb"></i></div><button class="x" id="snd">${DB.sound?'🔊':'🔇'}</button><div class="cnt" id="cnt">${s.timed?'⏱️':s.n+' / '+s.total}</div></div>
+    <div class="card">
+      <span class="chip">${fam.icon} ${fam.name}</span>${s.review?'<span class="chip rv">🔁 Berrikuspena</span>':''}
+      <p class="q">${ex.q}</p>
+      ${ex.note?`<p class="note">${ex.note}</p>`:''}
+      ${ex.big?`<div class="big${ex.bigSmall?' sm':''}">${ex.bigHtml?ex.big:esc(ex.big)}</div>`:''}
+      ${body}
+      <div id="fb"></div>
+      <button class="btn sec small" id="hintb">💡 Laguntza</button>
+      <button class="btn" id="act" ${ex.kind==='choice'?'style="display:none"':''}>Egiaztatu</button>
+    </div>`;
+  setProgress(false);
+  document.getElementById('quit').onclick=()=>{if(confirm('Saioa utzi nahi duzu?')){clearInterval(S.timer);home();}};
+  document.getElementById('snd').onclick=e=>toggleSound(e.currentTarget,false);
+  const act=document.getElementById('act');
+  act.onclick=()=>{ if(s.done) next(); else check(); };
+  document.getElementById('hintb').onclick=e=>{ document.getElementById('fb').innerHTML=`<div class="fb hint">💡 ${s.type.hint}</div>`; e.currentTarget.style.display='none'; };
+
+  if(ex.kind==='choice'){
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      if(s.done) return;
+      const i=+b.dataset.i, good=i===ex.answer;
+      app.querySelectorAll('.opt').forEach((o,k)=>{
+        o.disabled=true;
+        if(k===ex.answer) o.classList.add('ok');
+        else if(k===i) o.classList.add('ko');
+      });
+      finish(good,ex.explain||'');
+    });
+  }else if(ex.kind==='inputs'){
+    const ins=[...app.querySelectorAll('input.num')];
+    ins.forEach(inp=>inp.addEventListener('input',()=>{ const c=inp.value.replace(/[^\d]/g,''); if(c!==inp.value) inp.value=c; }));
+    ins.forEach((inp,k)=>inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault(); e.stopPropagation(); if(ins[k+1]) ins[k+1].focus(); else check();}
+    }));
+    if(ins[0]) ins[0].focus();
+  }else if(ex.kind==='order'){
+    drawOrder();
+  }else if(ex.kind==='match'){
+    drawMatch();
+  }else if(ex.kind==='tap'){
+    app.querySelectorAll('.tc').forEach(b=>b.onclick=()=>{
+      if(s.done) return;
+      const n=+b.dataset.n, i=ex.sel.indexOf(n);
+      if(i>=0) ex.sel.splice(i,1); else ex.sel.push(n);
+      b.classList.toggle('on',i<0);
+    });
+  }
+}
+function drawMatch(){
+  const s=S.sess, ex=s.cur;
+  const ml=document.getElementById('ml'), mr=document.getElementById('mr');
+  const owner=ex.rights.map((r,j)=>ex.map.indexOf(j));
+  const res=i=>ex.map[i]>=0&&ex.rights[ex.map[i]].o===i;
+  ml.innerHTML=ex.left.map((t,i)=>{
+    let c=ex.map[i]>=0?' c'+(i%4):'';
+    if(ex.sel===i) c+=' sel';
+    if(s.done) c+=res(i)?' ok':' ko';
+    return `<button class="${c.trim()}" data-i="${i}">${esc(t)}</button>`;
+  }).join('');
+  mr.innerHTML=ex.rights.map((r,j)=>{
+    let c=owner[j]>=0?' c'+(owner[j]%4):'';
+    if(s.done&&owner[j]>=0) c+=res(owner[j])?' ok':' ko';
+    return `<button class="${c.trim()}" data-j="${j}">${esc(r.t)}</button>`;
+  }).join('');
+  document.getElementById('act').disabled=!s.done&&ex.map.includes(-1);
+  if(s.done) return;
+  ml.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    ex.map[i]=-1; ex.sel=i; drawMatch();
+  });
+  mr.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const j=+b.dataset.j;
+    if(ex.sel===null){
+      const o=ex.map.indexOf(j); if(o>=0){ ex.map[o]=-1; drawMatch(); }
+      return;
+    }
+    const o=ex.map.indexOf(j); if(o>=0) ex.map[o]=-1;
+    ex.map[ex.sel]=j; ex.sel=null; drawMatch();
+  });
+}
+function setProgress(done){
+  const s=S.sess, pb=document.getElementById('pb');
+  if(pb&&!s.timed) pb.style.width=Math.round(100*((s.n-1)+(done?1:0))/s.total)+'%';
+}
+function drawOrder(){
+  const s=S.sess, ex=s.cur;
+  const slots=document.getElementById('slots'), pool=document.getElementById('pool');
+  slots.innerHTML=ex.placed.map((v,i)=>`<button class="tile" data-p="${i}">${v}</button>`).join('');
+  pool.innerHTML=ex.items.filter(v=>!ex.placed.includes(v)).map(v=>`<button class="tile" data-v="${v}">${v}</button>`).join('');
+  const act=document.getElementById('act');
+  if(s.done) return;
+  act.disabled=ex.placed.length!==ex.items.length;
+  slots.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{ if(s.done) return; ex.placed.splice(+b.dataset.p,1);drawOrder();});
+  pool.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{ if(s.done) return; ex.placed.push(b.dataset.v);drawOrder();});
+}
+function check(){
+  const s=S.sess, ex=s.cur;
+  if(s.done) return;
+  if(ex.kind==='inputs'){
+    const ins=[...app.querySelectorAll('input.num')];
+    const empty=ins.find(i=>!i.value.replace(/[^\d]/g,''));
+    if(empty){empty.focus();return;}
+    let all=true;
+    ins.forEach(inp=>{
+      const fl=ex.fields[+inp.dataset.i];
+      const v=parseInt(inp.value.replace(/[^\d]/g,''),10);
+      const good=v===fl.answer;
+      inp.classList.add(good?'ok':'ko'); inp.disabled=true;
+      if(!good) all=false;
+    });
+    finish(all,'Erantzun zuzena: '+ex.fields.filter(f=>f.fixed===undefined).map(f=>f.answer).join(' · '));
+  }else if(ex.kind==='order'){
+    const good=ex.placed.join(',')===ex.answer.join(',');
+    s.done=true;
+    document.querySelectorAll('#slots .tile').forEach((b,i)=>b.classList.add(b.textContent===ex.answer[i]?'ok':'ko'));
+    finish(good,'Ordena zuzena: '+ex.explain);
+  }else if(ex.kind==='match'){
+    if(ex.map.includes(-1)) return;
+    s.done=true;
+    drawMatch();
+    const good=ex.map.every((j,i)=>ex.rights[j].o===i);
+    finish(good,'Erantzun zuzenak: '+ex.explain);
+  }else if(ex.kind==='tap'){
+    const want=ex.answer, got=ex.sel;
+    const good=want.length===got.length&&want.every(n=>got.includes(n));
+    s.done=true;
+    app.querySelectorAll('.tc').forEach(b=>{
+      const n=+b.dataset.n, on=got.includes(n), need=want.includes(n);
+      b.classList.remove('on');
+      if(on&&need) b.classList.add('ok');
+      else if(on) b.classList.add('ko');
+      else if(need) b.classList.add('miss');
+    });
+    finish(good,'Zuzena: '+want.join(', '));
+  }
+}
+function finish(good,detail){
+  const s=S.sess;
+  s.done=true;
+  if(s.review||s.timed){
+    if(good) s.score++;
+  }else{
+    const st=DB.stats[s.type.id]||(DB.stats[s.type.id]={ok:0,ko:0});
+    if(good){st.ok++;s.score++;}else st.ko++;
+    save();
+  }
+  if(!good) s.missed.push({type:s.type,ex:s.cur});
+  sound(good);
+  setProgress(true);
+  document.getElementById('hintb').style.display='none';
+  document.getElementById('fb').innerHTML=good
+    ? `<div class="fb ok">${pick(PRAISE)} ✅</div>`
+    : `<div class="fb ko">Ez da zuzena. ${detail}<small>${s.type.hint}</small></div>`;
+  const act=document.getElementById('act');
+  act.style.display='block';
+  act.disabled=false;
+  act.textContent=s.n>=s.total?'Emaitza ikusi':'Hurrengoa';
+  if(s.timed&&s.limit&&Math.round((Date.now()-s.t0)/1000)>=s.limit) challengeResult();
+  act.focus && act.blur();
+}
+function result(){
+  const s=S.sess;
+  if(s.review){
+    const left=s.missed.length;
+    app.innerHTML=`
+      <div class="card">
+        <h1 style="text-align:center">Berrikuspena amaitu da</h1>
+        <div class="score">${s.score} / ${s.total}</div>
+        <div class="stars">${left?'💪':'🎉'}</div>
+        <p class="q" style="text-align:center">${left?`${left} ariketa falta dira zuzentzeko.`:'Dena zuzen! Akats guztiak zuzendu dituzu.'}</p>
+        <p class="note" style="text-align:center">Berrikuspena ez da kontatzen izarretan eta estatistiketan.</p>
+        ${left?`<button class="btn" id="rev">🔁 Berriz saiatu (${left})</button>`:''}
+        <button class="btn${left?' sec':''}" id="again">🚀 Saio berria</button>
+        <button class="btn sec" id="home">🏠 Hasiera</button>
+      </div>`;
+    if(left) document.getElementById('rev').onclick=()=>startReview(s.missed,s.filter);
+    document.getElementById('again').onclick=()=>start(s.filter);
+    document.getElementById('home').onclick=home;
+    return;
+  }
+  const ratio=s.score/s.total, stars=ratio>=.9?3:ratio>=.7?2:ratio>=.5?1:0;
+  const before=DB.stars; DB.sessions++; DB.stars+=stars;
+  const fresh=STICKERS.filter(x=>x.at>before&&x.at<=DB.stars);
+  const k=todayKey(); DB.days[k]=(DB.days[k]||0)+1;
+  save();
+  const msg=stars===3?'Bikain! Txapeldun bat zara!':stars===2?'Oso ondo! Ia-ia...':stars===1?'Ondo! Berriz saiatuz hobetuko duzu.':'Ez pasa ezer. Praktikatuz ikasten da!';
+  app.innerHTML=`
+    <div class="card">
+      <h1 style="text-align:center">Saioa amaitu da</h1>
+      <div class="score">${s.score} / ${s.total}</div>
+      <div class="stars">${'⭐'.repeat(stars)||'💪'}</div>
+      <p class="q" style="text-align:center">${msg}</p>
+      ${fresh.length?`<div class="newstk">Pegatina berria!<b>${fresh.map(x=>x.e).join(' ')}</b></div>`:''}
+      ${s.missed.length?`<button class="btn" id="rev">🔁 Akatsak berrikusi (${s.missed.length})</button>
+      <p class="note" style="text-align:center;margin-top:6px">Berrikuspena ez da kontatzen izarretan eta estatistiketan.</p>`:''}
+      <button class="btn${s.missed.length?' sec':''}" id="again">🚀 Berriz hasi</button>
+      <button class="btn sec" id="home">🏠 Hasiera</button>
+    </div>`;
+  if(s.missed.length) document.getElementById('rev').onclick=()=>startReview(s.missed,s.filter);
+  document.getElementById('again').onclick=()=>start(s.filter);
+  document.getElementById('home').onclick=home;
+}
+
+// ---------- Gurasoak ----------
+function parents(){
+  if(!DB.pin){
+    app.innerHTML=`<div class="card"><h1>Gurasoak</h1><p class="mut">Sortu 4 zifrako PIN bat. Beste inork ez du gune hau ikusiko.</p>
+      <input class="pin" id="pin" type="text" inputmode="numeric" maxlength="4" autocomplete="off">
+      <button class="btn" id="ok">Gorde</button><button class="btn sec" id="back">Atzera</button></div>`;
+    document.getElementById('back').onclick=home;
+    document.getElementById('ok').onclick=()=>{const v=document.getElementById('pin').value.replace(/\D/g,''); if(v.length!==4){document.getElementById('pin').focus();return;} DB.pin=v; save(); parentsView();};
+    return;
+  }
+  app.innerHTML=`<div class="card"><h1>Gurasoak</h1><p class="mut">Sartu PINa.</p>
+    <input class="pin" id="pin" type="text" inputmode="numeric" maxlength="4" autocomplete="off">
+    <button class="btn" id="ok">Sartu</button><button class="btn sec" id="back">Atzera</button><p class="mut" id="err" style="color:var(--ko)"></p></div>`;
+  document.getElementById('back').onclick=home;
+  const go=()=>{ if(document.getElementById('pin').value===DB.pin) parentsView(); else {document.getElementById('err').textContent='PIN okerra.';document.getElementById('pin').value='';} };
+  document.getElementById('ok').onclick=go;
+  document.getElementById('pin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+}
+function parentsView(){
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push([['A','A','A','O','O','L','I'][d.getDay()===0?6:d.getDay()-1],DB.days[dateKey(d)]||0]);}
+  const mx=Math.max(1,...days.map(x=>x[1]));
+  const wk7=days.reduce((a,x)=>a+x[1],0);
+  const rows=TYPES.map(t=>({t,s:DB.stats[t.id]||{ok:0,ko:0}})).filter(r=>r.s.ok+r.s.ko>0)
+    .sort((a,b)=>{const f=r=>r.s.ko/(r.s.ok+r.s.ko);return f(b)-f(a)||(b.s.ok+b.s.ko)-(a.s.ok+a.s.ko);});
+  app.innerHTML=`<div class="card"><h1>Gurasoak</h1>
+    <p class="mut">⭐ ${DB.stars} izar · 🎯 ${DB.sessions} saio · 🔥 ${streak()} egun jarraian · ⏱️ errekorra ${DB.best||0}</p>
+    <h3 style="margin-top:12px">Azken 7 egunak (${wk7} saio)</h3>
+    <div class="wk">${days.map(x=>`<div><i style="height:${Math.round(70*x[1]/mx)}px"></i>${x[1]||''}<br>${x[0]}</div>`).join('')}</div></div>
+    <div class="card"><h3>Ariketa motak (zailenetik errazenera)</h3>
+    ${rows.length?`<table class="pt"><tr><th>Mota</th><th>Zuzen</th><th>Huts</th><th>%</th></tr>`+rows.map(r=>`<tr><td>${r.t.id}</td><td>${r.s.ok}</td><td>${r.s.ko}</td><td>${Math.round(100*r.s.ok/(r.s.ok+r.s.ko))}%</td></tr>`).join('')+`</table>`:'<p class="mut">Oraindik ez dago daturik.</p>'}</div>
+    <div class="card"><button class="btn" id="print" style="margin-top:0">🖨️ Orri inprimagarria (20 ariketa)</button>
+      <button class="btn sec" id="chpin">PINa aldatu</button>
+      <button class="btn sec" id="reset">Datuak ezabatu</button>
+      <button class="btn sec" id="back">🏠 Hasiera</button></div>`;
+  document.getElementById('back').onclick=home;
+  document.getElementById('print').onclick=sheet;
+  document.getElementById('chpin').onclick=()=>{DB.pin='';save();parents();};
+  document.getElementById('reset').onclick=()=>{ if(confirm('Estatistika, izarrak eta errekorra ezabatu nahi dituzu?')){ DB.stats={};DB.stars=0;DB.sessions=0;DB.days={};DB.best=0;save();parentsView(); } };
+}
+function sheetItem(ex,n){
+  const bl='<span class="bl"></span>';
+  let b='';
+  if(ex.big) b+=`<div class="big">${ex.bigHtml?ex.big:esc(ex.big)}</div>`;
+  if(ex.html) b+=ex.html;
+  if(ex.kind==='choice'){
+    b+=`<div style="margin-top:6px">`+ex.options.map((o,i)=>`<span class="po">${'abcd'[i]}) ${esc(o)}</span>`).join('')+`</div>`;
+  }else if(ex.kind==='inputs'){
+    const cell=f=>f.fixed!==undefined?`<span class="box">${f.fixed}</span>`:bl;
+    if(ex.grid){
+      b+=`<table class="gt"><tr>`+ex.grid.head.map(x=>`<th>${x}</th>`).join('')+`</tr>`+ex.grid.rows.map(r=>`<tr><td>${r.label}</td>`+r.cells.map(()=>`<td>${bl}</td>`).join('')+`</tr>`).join('')+`</table>`;
+    }else if(ex.layout==='inline'){
+      b+=`<div>`+ex.fields.map((f,i)=>(i?` ${ex.sep||','} `:'')+cell(f)).join('')+`</div>`;
+    }else{
+      b+=ex.fields.map(f=>`<div style="margin:6px 0">${f.pre||''} ${cell(f)} ${f.post||''}</div>`).join('');
+    }
+  }else if(ex.kind==='order'){
+    b+=`<div>${ex.items.map(x=>`<span class="box">${x}</span>`).join('')}</div><div style="margin-top:6px">${ex.items.map(()=>bl).join(' , ')}</div>`;
+  }else if(ex.kind==='match'){
+    b+=`<div style="display:flex;justify-content:space-between;gap:20px;margin-top:6px"><div>${ex.left.map((x,i)=>`<div class="box">${String.fromCharCode(65+i)}) ${esc(x)}</div>`).join('<br>')}</div><div>${ex.rights.map((r,j)=>`<div class="box">${j+1}) ${esc(r.t)}</div>`).join('<br>')}</div></div>`;
+  }
+  return `<div class="pi"><b>${n}.</b> ${ex.q}${ex.note?`<div class="note">${ex.note}</div>`:''}${b}</div>`;
+}
+function sheetSol(ex,n){
+  let a='';
+  if(ex.kind==='choice') a=ex.options[ex.answer];
+  else if(ex.kind==='inputs') a=ex.fields.filter(f=>f.fixed===undefined).map(f=>f.answer).join(' · ');
+  else if(ex.kind==='order') a=ex.answer.join(' , ');
+  else if(ex.kind==='match') a=ex.left.map((x,i)=>String.fromCharCode(65+i)+'-'+(ex.rights.findIndex(r=>r.o===i)+1)).join(' ');
+  return `<div>${n}. ${esc(a)}</div>`;
+}
+function sheet(){
+  const list=[];let last=null,guard=0;
+  while(list.length<20&&guard++<400){
+    const t=nextType(null,last), ex=t.gen();
+    if(ex.kind==='tap') continue;
+    last=t; list.push(ex);
+  }
+  app.innerHTML=`<div class="noprint"><button class="btn" id="pr">🖨️ Inprimatu</button><button class="btn sec" id="nw">🔄 Beste orri bat</button><button class="btn sec" id="bk">Atzera</button></div>
+    <div class="card sheet"><h1>Máel study</h1><p class="mut">Izena: ______________________ &nbsp; Data: ____________</p>
+    ${list.map((e,i)=>sheetItem(e,i+1)).join('')}
+    <div class="pb"><h3>Erantzunak</h3><div class="sol">${list.map((e,i)=>sheetSol(e,i+1)).join('')}</div></div></div>`;
+  document.getElementById('pr').onclick=()=>window.print();
+  document.getElementById('nw').onclick=sheet;
+  document.getElementById('bk').onclick=parentsView;
+}
+
+document.addEventListener('keydown',e=>{
+  const s=S.sess;
+  if(e.key==='Enter'&&s&&s.done&&document.getElementById('act')&&!e.repeat&&e.target.tagName!=='BUTTON'){ e.preventDefault(); next(); }
+});
+
+home();
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
